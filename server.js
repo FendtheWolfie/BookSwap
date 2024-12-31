@@ -9,6 +9,10 @@ app.use(express.static('public'))
 
 const path = require('path');
 const { clear } = require('console');
+const fs = require('fs');
+
+const sqlite3 = require('sqlite3').verbose();
+
 
 //diese folgenden 2 commands konfigurieren express die ejs templates zu verwenden
 //es wird auch deklariert, wo sich die templates befinden, hier z.B. im views folder
@@ -49,19 +53,18 @@ app.get('/api/data', (req, res) => {
 
 
 app.get('/api/image', (req, res) => {
-    res.json({message: 'this is my data',
-            text: 'hbhhjbhhj'
-    })
+    const imagePath = path.join(__dirname, 'public', 'images', 'fox.png');
+    const imageBase64 = fs.readFileSync(imagePath, 'base64');
+    res.json({
+        message: 'this is my data',
+        text: 'hbhhjbhhj',
+        image: imageBase64
+    });
 })
 
 
-//direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
-app.listen(port, () => {
-    console.log(`localhost:${port}`)
-})
 
-/* const sqlite3 = require('sqlite3').verbose();
-var sql;
+
 
 //connect to db
 const db = new sqlite3.Database("./userinformation.db", sqlite3.OPEN_READWRITE, (err) => {
@@ -69,7 +72,7 @@ const db = new sqlite3.Database("./userinformation.db", sqlite3.OPEN_READWRITE, 
 })
 
 //kreiren von einem table
-sql = `CREATE TABLE users(id INTEGER PRMARY KEY,first_name,last_name, username,password,email,)`;
+var sql = `CREATE TABLE users(id INTEGER PRMARY KEY,first_name,last_name, username,password,email,)`;
 db.run(sql)
 
 //drop table
@@ -83,4 +86,8 @@ db.run(sql,[], (err) => {
     if (err) return console.error(err.message)
 })
 
- */
+
+//direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
+app.listen(port, () => {
+    console.log(`localhost:${port}`)
+})
