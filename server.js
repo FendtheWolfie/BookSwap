@@ -40,9 +40,9 @@ const setupRoute = (app, routePath, viewName) => {
 setupRoute(app, '/', 'index.ejs')
 setupRoute(app, '/impressum','impressum.ejs')
 setupRoute(app, '/geschichte','geschichte.ejs')
-setupRoute(app, '/kontakt','kontakt.ejs')
+setupRoute(app, '/login','login.ejs')
 setupRoute(app, '/testdb','testdb.ejs')
-
+setupRoute(app, '/registrierung','registrierung.ejs')
 
 
 app.get('/api/data', (req, res) => {
@@ -63,28 +63,71 @@ app.get('/api/image', (req, res) => {
 })
 
 
+const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqlite3.OPEN_READWRITE, (err) => {
+    if (err) {
+        console.error(err.message);
+    } else {
+        console.log('Connected to the userinformation.db database.');
+    }
+});
 
+app.post('/api/login', (req, res) => {
+    const { username, password, email } = req.body;
 
+    const createTableSql = `
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            password TEXT,
+            email TEXT UNIQUE
+        )
+    `;
+
+    db.run(createTableSql, (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error creating table' });
+        }
+
+        const checkEmailSql = `SELECT * FROM users WHERE email = ?`;
+        db.get(checkEmailSql, [email], (err, row) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error checking email' });
+            }
+
+            if (row) {
+                return res.status(400).json({ message: 'Email already in use' });
+            }
+
+            const insertUserSql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
+            db.run(insertUserSql, [username, password, email], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error inserting user' });
+                }
+
+                res.status(200).json({ message: 'User registered successfully' });
+            });
+        });
+    });
+});
 
 //connect to db
-const db = new sqlite3.Database("./userinformation.db", sqlite3.OPEN_READWRITE, (err) => {
-    if (err) return console.error(err.message);
-})
+//const db = new sqlite3.Database("./userinformation.db", sqlite3.OPEN_READWRITE, (err) => {
+//    if (err) return console.error(err.message);
+//})
 
-//kreiren von einem table
-var sql = `CREATE TABLE users(id INTEGER PRMARY KEY,first_name,last_name, username,password,email,)`;
-db.run(sql)
+//kreiren von einem tablevar sql = `CREATE TABLE users(id INTEGER PRMARY KEY,first_name,last_name, username,password,email,)`;
+//db.run(sql)
 
 //drop table
-db.run("DROP TABLE users");
+//db.run("DROP TABLE users");
 
 //insert data into table
 
 
-sql = `INSERT INTO users(first_name,last_name,username,password,email) Values(?,?,?,?,?)`;
-db.run(sql,[], (err) => {
-    if (err) return console.error(err.message)
-})
+//sql = `INSERT INTO users(first_name,last_name,username,password,email) Values(?,?,?,?,?)`;
+//db.run(sql,[], (err) => {
+//    if (err) return console.error(err.message)
+//})
 
 
 //direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren

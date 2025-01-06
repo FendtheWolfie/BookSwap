@@ -1,9 +1,266 @@
-<h1>Hello World, dies ist ne homepage</h1>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSwap</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="#">
+                <img src="images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50" href="kontakt.ejs"> <!-- Replace with your SVG logo -->
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="inseraterstellen.html">
+                            <i class="bi bi-plus"></i>
+                            Angebot erstellen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login" class="btn btn-primary">
+                            <i class="bi bi-person"></i>
+                            Anmelden
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<a href="/impressum">Impressum
-</a>
-<a href="/geschichte">Geschichte
-</a>
-<a href="/kontakt"> Kontakt
+    <!-- Search Bar -->
+    <div class="container mt-4">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Suche nach Artikel">
+            <button class="btn btn-primary" type="button">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
 
-</a>
+    <!-- Categories -->
+    <div class="container mt-3">
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+                <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#sidebar">
+                  <i class="bi bi-list"></i>
+                  Alle Kategorien
+                </a>
+
+                <a href="#sidebar" class="d-block mt-3" data-bs-toggle="offcanvas" 
+                role="button" aria-controls="sidebar"></a>
+                
+              
+              </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Mathematik">Mathe</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Deutsch">Deutsch</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Englisch">Englisch</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Französisch">Französisch</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Geografie">Geografie</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Geschichte">Geschichte</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Wirtschaft">Wirtschaft</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="kategorie.html?category=Recht">Recht</a>
+            </li>
+        </ul>
+    </div>
+    <!-- Banner -->
+    <div class="container mt-4">
+        <div class="row align-items-center bg-light p-4 rounded">
+            <div class="col-md-8">
+                <h1>Online Marktplatz für gebrauchte Bücher</h1>
+                <p>Unsere Website bietet dir die perfekte Möglichkeit gebrauchte Bücher zu inserieren oder zu erwerben.</p>
+                <div class="text-center">
+                  <a href="inseraterstellen.html" class="btn btn-primary mb-5">Jetzt Inserieren</a>
+                </div>        
+            </div>
+            <div class="col-md-4">
+                <img src="images/Banner.jpg" class="img-fluid w-100 h-100" alt="Banner Image">
+
+                
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- inseratüberblick -->
+     <div class="container mt-2">
+
+        <!-- Mathi sektion -->
+        <h3 class="d-flex justify-content-between align-items-center">
+            Mathematik
+            <a href="kategorie.html?category=Mathematik" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="math-section"></div>
+
+        <!-- deu sektion -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Deutsch
+            <a href="kategorie.html?category=Deutsch" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="german-section"></div>
+
+        <!-- English Sektion -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Englisch
+            <a href="kategorie.html?category=Englisch" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="english-section"></div>
+
+        <!-- Franz  -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Französisch
+            <a href="kategorie.html?category=Französisch" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="french-section"></div>
+
+        <!-- Wir sektion -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Wirtschaft
+            <a href="kategorie.html?category=Wirtschaft" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="economics-section"></div>
+
+        <!-- geo Sektino -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Geografie
+            <a href="kategorie.html?category=Geografie" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="geography-section"></div>
+
+        <!-- GS -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Geschichte
+            <a href="kategorie.html?category=Geschichte" class="text-decoration-none" >Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="history-section"></div>
+
+        <!-- Recht -->
+        <h3 class="d-flex justify-content-between align-items-center mt-5">
+            Recht
+            <a href="kategorie.html?category=Recht" class="text-decoration-none">Mehr anzeigen</a>
+        </h3>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="law-section"></div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-3 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 BookSwap</p>
+            <a href="#">AKB</a> | <a href="#">Support</a> | <a href="#">Social Media</a>
+        </div>
+    </footer>
+
+    <!--Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sidebar-label">Erweiterte Suchfunktionen </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="offcanvas-body">
+            <form>
+                <!-- Schulfach Dropdown -->
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Schulfach</label>
+                    <select id="subject" class="form-select">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Mathematik">Mathematik</option>
+                        <option value="Deutsch">Deutsch</option>
+                        <option value="Englisch">Englisch</option>
+                        <option value="Französisch">Französisch</option>
+                        <option value="Geografie">Geografie</option>
+                        <option value="Geschichte">Geschichte</option>
+                        <option value="Wirtschaft">Wirtschaft</option>
+                        <option value="Recht">Recht</option>
+                    </select>
+                </div>
+
+                <!-- Erscheinungsjahr Dropdown -->
+                <div class="mb-3">
+                    <label for="year" class="form-label">Erscheinungsjahr</label>
+                    <select id="year" class="form-select">
+                        <option value="">Bitte wählen...</option>
+                        <!-- Dynamisch generierte Optionen von 2010 bis 2025 -->
+                        <script>
+                            for (let year = 2010; year <= 2025; year++) {
+                                document.write(`<option value="${year}">${year}</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+
+                <!-- Zustand des Buches Radio Buttons -->
+                <div class="mb-3">
+                    <label class="form-label">Zustand des Buches</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Wie neu" id="conditionNew">
+                        <label class="form-check-label" for="conditionNew">Wie neu</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Guter Zustand" id="conditionGood">
+                        <label class="form-check-label" for="conditionGood">Guter Zustand</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Akzeptabel" id="conditionAcceptable">
+                        <label class="form-check-label" for="conditionAcceptable">Akzeptabel</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Stark gebraucht" id="conditionUsed">
+                        <label class="form-check-label" for="conditionUsed">Stark gebraucht</label>
+                    </div>
+                </div>
+
+                <!-- Niveau Dropdown -->
+                <div class="mb-3">
+                    <label for="level" class="form-label">Niveau</label>
+                    <select id="level" class="form-select">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Realschule">Realschule</option>
+                        <option value="Sekundarschule">Sekundarschule</option>
+                        <option value="Bezirkschule">Bezirkschule</option>
+                        <option value="Berufschule">Berufschule</option>
+                        <option value="Kantonsschule">Kantonsschule</option>
+                        <option value="Hochschule">Hochschule</option>
+                        <option value="Universität">Universität</option>
+                    </select>
+                </div>
+
+                <!-- Suchbutton -->
+                <button type="submit" class="btn btn-primary">Suchen</button>
+            </form>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="inserate Mainpage.js"></script>
+    <script src="test.js"></script>
+
+</body>
+</html>

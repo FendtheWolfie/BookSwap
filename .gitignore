@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+test zeugs/info.txt
+userinformation.db
+public/images/foxFavico.png
