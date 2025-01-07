@@ -12,6 +12,7 @@ const { clear } = require('console');
 const fs = require('fs');
 
 const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
 
 
 //diese folgenden 2 commands konfigurieren express die ejs templates zu verwenden
@@ -71,15 +72,17 @@ const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqli
     }
 });
 
-app.post('/api/login', (req, res) => {
+app.post('/api/registration', (req, res) => {
     const { username, password, email } = req.body;
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
+            auth_token TEXT DEFAULT (hex(randomblob(4))),
+            username TEXT UNIQUE,
             password TEXT,
-            email TEXT UNIQUE
+            email TEXT UNIQUE,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `;
 
@@ -98,17 +101,27 @@ app.post('/api/login', (req, res) => {
                 return res.status(400).json({ message: 'Email already in use' });
             }
 
-            const insertUserSql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
-            db.run(insertUserSql, [username, password, email], (err) => {
+            bcrypt.hash(password, 10, (err, hashedPassword) => {
                 if (err) {
-                    return res.status(500).json({ message: 'Error inserting user' });
+                    return res.status(500).json({ message: 'Error hashing password' });
                 }
 
-                res.status(200).json({ message: 'User registered successfully' });
+                const insertUserSql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
+                db.run(insertUserSql, [username, hashedPassword, email], (err) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Benutzername bereits vergeben' });
+                    }
+
+                    res.status(200).json({ message: 'User registered successfully' });
+                });
             });
         });
     });
 });
+
+
+
+
 
 //connect to db
 //const db = new sqlite3.Database("./userinformation.db", sqlite3.OPEN_READWRITE, (err) => {
