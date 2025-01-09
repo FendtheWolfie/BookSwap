@@ -44,6 +44,7 @@ setupRoute(app, '/geschichte','geschichte.ejs')
 setupRoute(app, '/login','login.ejs')
 setupRoute(app, '/testdb','testdb.ejs')
 setupRoute(app, '/registrierung','registrierung.ejs')
+setupRoute(app, '/kategorie','kategorie.ejs')
 
 
 app.get('/api/data', (req, res) => {
@@ -122,25 +123,6 @@ app.post('/api/registration', (req, res) => {
 
 
 
-
-//connect to db
-//const db = new sqlite3.Database("./userinformation.db", sqlite3.OPEN_READWRITE, (err) => {
-//    if (err) return console.error(err.message);
-//})
-
-//kreiren von einem tablevar sql = `CREATE TABLE users(id INTEGER PRMARY KEY,first_name,last_name, username,password,email,)`;
-//db.run(sql)
-
-//drop table
-//db.run("DROP TABLE users");
-
-//insert data into table
-
-
-//sql = `INSERT INTO users(first_name,last_name,username,password,email) Values(?,?,?,?,?)`;
-//db.run(sql,[], (err) => {
-//    if (err) return console.error(err.message)
-//})
 
 
 //direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren

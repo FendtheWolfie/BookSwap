@@ -22,10 +22,11 @@
     "html": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "node.js": "^0.0.1-security",
+    "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7",
+    "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   }

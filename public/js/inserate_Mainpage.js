@@ -16,6 +16,7 @@ function createCard(title, price, year, condition, level) {
     `;
 }
 
+
 // Function to populate a section with books
 function populateSection(sectionId, books) {
     const section = document.getElementById(sectionId);
