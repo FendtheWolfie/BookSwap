@@ -20,7 +20,7 @@
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="#">
-                <img src="images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50"> <!-- Replace with your SVG logo -->
+                <img src="logo-transparent-svg.svg" alt="BookSwap Logo" height="50"> <!-- Replace with your SVG logo -->
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -61,6 +61,7 @@
                   <i class="bi bi-list"></i>
                   Alle Kategorien
                 </a>
+                
 
                 <a href="#sidebar" class="d-block mt-3" data-bs-toggle="offcanvas" 
                 role="button" aria-controls="sidebar"></a>
@@ -101,6 +102,99 @@
       <div class="row row-cols-1 row-cols-md-5 g-4" id="category-section"></div>
     </div>
 
+    <!--Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="sidebar-label">Erweiterte Suchfunktionen </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="offcanvas-body">
+            <form>
+                <!-- Schulfach Dropdown -->
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Schulfach</label>
+                    <select id="subject" class="form-select">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Mathematik">Mathematik</option>
+                        <option value="Deutsch">Deutsch</option>
+                        <option value="Englisch">Englisch</option>
+                        <option value="Französisch">Französisch</option>
+                        <option value="Geografie">Geografie</option>
+                        <option value="Geschichte">Geschichte</option>
+                        <option value="Wirtschaft">Wirtschaft</option>
+                        <option value="Recht">Recht</option>
+                    </select>
+                </div>
+
+                <!-- Erscheinungsjahr Dropdown -->
+                <div class="mb-3">
+                    <label for="year" class="form-label">Erscheinungsjahr</label>
+                    <select id="year" class="form-select">
+                        <option value="">Bitte wählen...</option>
+                        <!-- Dynamisch generierte Optionen von 2010 bis 2025 -->
+                        <script>
+                            for (let year = 2010; year <= 2025; year++) {
+                                document.write(`<option value="${year}">${year}</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+
+                <!-- Zustand des Buches Radio Buttons -->
+                <div class="mb-3">
+                    <label class="form-label">Zustand des Buches</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Wie neu" id="conditionNew">
+                        <label class="form-check-label" for="conditionNew">Wie neu</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Guter Zustand" id="conditionGood">
+                        <label class="form-check-label" for="conditionGood">Guter Zustand</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Akzeptabel" id="conditionAcceptable">
+                        <label class="form-check-label" for="conditionAcceptable">Akzeptabel</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Stark gebraucht" id="conditionUsed">
+                        <label class="form-check-label" for="conditionUsed">Stark gebraucht</label>
+                    </div>
+                </div>
+
+                <!-- Niveau Dropdown -->
+                <div class="mb-3">
+                    <label for="level" class="form-label">Niveau</label>
+                    <select id="level" class="form-select">
+                        <option value="">Bitte wählen...</option>
+                        <option value="Realschule">Realschule</option>
+                        <option value="Sekundarschule">Sekundarschule</option>
+                        <option value="Bezirkschule">Bezirkschule</option>
+                        <option value="Berufschule">Berufschule</option>
+                        <option value="Kantonsschule">Kantonsschule</option>
+                        <option value="Hochschule">Hochschule</option>
+                        <option value="Universität">Universität</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                        <label for="price" class="form-label">Preis</label>
+                        <select id="price" class="form-select">
+                            <option value="">Bitte wählen...</option>
+                            <option value="0-5">Unter 5 CHF</option>
+                            <script>
+                                for (let i = 5; i <= 95; i += 5) {
+                                    document.write(`<option value="${i}-${i + 5}">${i}-${i + 5} CHF</option>`);
+                                }
+                            </script>
+                            <option value="100+">Über 100 CHF</option>
+                        </select>
+                </div>
+
+                <!-- Suchbutton -->
+                <button type="submit" class="btn btn-primary">Suchen</button>
+            </form>
+
+
     <script>
       // Function to get the query parameter value from the URL
       function getQueryParam(param) {
@@ -108,84 +202,87 @@
         return urlParams.get(param);
       }
 
-      // Function to create a book card
-      function createCard(title, price, year, condition, level) {
-        return `
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <div class="bg-secondary" style="height: 150px;"></div>
-                <h5 class="card-title mt-3">${title}</h5>
-                <p class="card-text">Preis: ${price} CHF</p>
-                <p class="card-text">Erscheinungsjahr: ${year}</p>
-                <p class="card-text">Zustand: ${condition}</p>
-                <p class="card-text">Niveau: ${level}</p>
-              </div>
+      /// Function to create a book card
+function createCard(title, price, year, condition, level) {
+    return `
+      <div class="col">
+        <a href="Angebotansicht.html?title=${encodeURIComponent(title)}&price=${price}&year=${year}&condition=${encodeURIComponent(condition)}&level=${encodeURIComponent(level)}" class="text-decoration-none">
+          <div class="card">
+            <div class="card-body">
+              <div class="bg-secondary" style="height: 150px;"></div>
+              <h5 class="card-title mt-3">${title}</h5>
+              <p class="card-text">Preis: ${price} CHF</p>
+              <p class="card-text">Erscheinungsjahr: ${year}</p>
+              <p class="card-text">Zustand: ${condition}</p>
+              <p class="card-text">Niveau: ${level}</p>
             </div>
           </div>
-        `;
-      }
-
+        </a>
+      </div>
+    `;
+  }
       // Function to populate books based on the selected category
-      function populateCategoryBooks(category) {
-        const categories = {
-          Mathematik: [
-            { title: "Math Book 1", price: 20, year: 2015, condition: "Wie neu", level: "Realschule" },
-            { title: "Math Book 2", price: 25, year: 2018, condition: "Guter Zustand", level: "Sekundarschule" },
-            { title: "Math Book 3", price: 30, year: 2020, condition: "Akzeptabel", level: "Kantonsschule" },
-            { title: "Math Book 4", price: 15, year: 2012, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "Math Book 5", price: 10, year: 2021, condition: "Wie neu", level: "Universität" },
-          ],
-          Deutsch: [
-            { title: "German Book 1", price: 18, year: 2013, condition: "Wie neu", level: "Realschule" },
-            { title: "German Book 2", price: 22, year: 2015, condition: "Guter Zustand", level: "Sekundarschule" },
-            { title: "German Book 3", price: 28, year: 2018, condition: "Akzeptabel", level: "Kantonsschule" },
-            { title: "German Book 4", price: 12, year: 2012, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "German Book 5", price: 16, year: 2020, condition: "Wie neu", level: "Universität" },
-          ],
-          Englisch: [
-            { title: "English Book 1", price: 20, year: 2014, condition: "Guter Zustand", level: "Realschule" },
-            { title: "English Book 2", price: 22, year: 2016, condition: "Akzeptabel", level: "Sekundarschule" },
-            { title: "English Book 3", price: 18, year: 2017, condition: "Wie neu", level: "Kantonsschule" },
-            { title: "English Book 4", price: 30, year: 2021, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "English Book 5", price: 25, year: 2019, condition: "Guter Zustand", level: "Universität" },
-          ],
-              Französisch: [
-            { title: "French Book 1", price: 25, year: 2015, condition: "Wie neu", level: "Realschule" },
-            { title: "French Book 2", price: 20, year: 2013, condition: "Akzeptabel", level: "Sekundarschule" },
-            { title: "French Book 3", price: 22, year: 2019, condition: "Guter Zustand", level: "Kantonsschule" },
-            { title: "French Book 4", price: 18, year: 2016, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "French Book 5", price: 15, year: 2018, condition: "Wie neu", level: "Universität" },
-          ],
-          Wirtschaft: [
-            { title: "Economics Book 1", price: 30, year: 2017, condition: "Guter Zustand", level: "Realschule" },
-            { title: "Economics Book 2", price: 28, year: 2015, condition: "Akzeptabel", level: "Sekundarschule" },
-            { title: "Economics Book 3", price: 25, year: 2018, condition: "Wie neu", level: "Kantonsschule" },
-            { title: "Economics Book 4", price: 20, year: 2021, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "Economics Book 5", price: 22, year: 2019, condition: "Guter Zustand", level: "Universität" },
-          ],
-         Geografie: [
-            { title: "Geography Book 1", price: 18, year: 2013, condition: "Wie neu", level: "Realschule" },
-            { title: "Geography Book 2", price: 22, year: 2015, condition: "Guter Zustand", level: "Sekundarschule" },
-            { title: "Geography Book 3", price: 30, year: 2017, condition: "Akzeptabel", level: "Kantonsschule" },
-            { title: "Geography Book 4", price: 15, year: 2018, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "Geography Book 5", price: 25, year: 2020, condition: "Wie neu", level: "Universität" },
-           ],
-          Geschichte: [
-            { title: "History Book 1", price: 20, year: 2014, condition: "Guter Zustand", level: "Realschule" },
-            { title: "History Book 2", price: 18, year: 2016, condition: "Akzeptabel", level: "Sekundarschule" },
-            { title: "History Book 3", price: 28, year: 2018, condition: "Wie neu", level: "Kantonsschule" },
-            { title: "History Book 4", price: 25, year: 2021, condition: "Stark gebraucht", level: "Hochschule" },
-            { title: "History Book 5", price: 30, year: 2019, condition: "Guter Zustand", level: "Universität" },
-          ],
-          Recht: [
-              { title: "Law Book 1", price: 35, year: 2015, condition: "Wie neu", level: "Realschule" },
-              { title: "Law Book 2", price: 30, year: 2017, condition: "Guter Zustand", level: "Sekundarschule" },
-              { title: "Law Book 3", price: 40, year: 2018, condition: "Akzeptabel", level: "Kantonsschule" },
-              { title: "Law Book 4", price: 25, year: 2021, condition: "Stark gebraucht", level: "Hochschule" },
-              { title: "Law Book 5", price: 18, year: 2019, condition: "Wie neu", level: "Universität" },
-            ],
-          };
+      // Funktion zum Anzeigen der Bücher basierend auf der Kategorie
+function populateCategoryBooks(category) {
+    const categories = {
+        Mathematik: [
+            { title: "Math Book 1", price: 20, year: 2015, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Mathematik"  },
+            { title: "Math Book 2", price: 25, year: 2018, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Mathematik"  },
+            { title: "Math Book 3", price: 30, year: 2020, condition: "Akzeptabel", level: "Kantonsschule" , description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Mathematik" },
+            { title: "Math Book 4", price: 15, year: 2012, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Mathematik"  },
+            { title: "Math Book 5", price: 10, year: 2021, condition: "Wie neu", level: "Universität" , description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Mathematik" },
+        ],
+        Deutsch: [
+            { title: "German Book 1", price: 18, year: 2013, condition: "Wie neu", level: "Realschule" , description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Deutsch" },
+            { title: "German Book 2", price: 22, year: 2015, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Deutsch"  },
+            { title: "German Book 3", price: 28, year: 2018, condition: "Akzeptabel", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Deutsch" },
+            { title: "German Book 4", price: 12, year: 2012, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Deutsch" },
+            { title: "German Book 5", price: 16, year: 2020, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Deutsch"  },
+        ],
+        Englisch: [
+            { title: "English Book 1", price: 20, year: 2014, condition: "Guter Zustand", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
+            { title: "English Book 2", price: 22, year: 2016, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
+            { title: "English Book 3", price: 18, year: 2017, condition: "Wie neu", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
+            { title: "English Book 4", price: 30, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
+            { title: "English Book 5", price: 25, year: 2019, condition: "Guter Zustand", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Englisch"  },
+        ],
+        Französisch: [
+            { title: "French Book 1", price: 25, year: 2015, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Französisch" },
+            { title: "French Book 2", price: 20, year: 2013, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Französisch"  },
+            { title: "French Book 3", price: 22, year: 2019, condition: "Guter Zustand", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Französisch" },
+            { title: "French Book 4", price: 18, year: 2016, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Französisch"  },
+            { title: "French Book 5", price: 15, year: 2018, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Französisch" },
+        ],
+        Wirtschaft: [
+            { title: "Economics Book 1", price: 30, year: 2017, condition: "Guter Zustand", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
+            { title: "Economics Book 2", price: 28, year: 2015, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
+            { title: "Economics Book 3", price: 25, year: 2018, condition: "Wie neu", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
+            { title: "Economics Book 4", price: 20, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
+            { title: "Economics Book 5", price: 22, year: 2019, condition: "Guter Zustand", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
+        ],
+       Geografie: [
+            { title: "Geography Book 1", price: 18, year: 2013, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geografie"  },
+            { title: "Geography Book 2", price: 22, year: 2015, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geografie"  },
+            { title: "Geography Book 3", price: 30, year: 2017, condition: "Akzeptabel", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geografie"  },
+            { title: "Geography Book 4", price: 15, year: 2018, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geografie" },
+            { title: "Geography Book 5", price: 25, year: 2020, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
+        ],
+        Geschichte: [
+            { title: "History Book 1", price: 20, year: 2014, condition: "Guter Zustand", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geschichte"  },
+            { title: "History Book 2", price: 18, year: 2016, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geschichte" },
+            { title: "History Book 3", price: 28, year: 2018, condition: "Wie neu", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geschichte" },
+            { title: "History Book 4", price: 25, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geschichte"  },
+            { title: "History Book 5", price: 30, year: 2019, condition: "Guter Zustand", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geschichte" },
+        ],
+        Recht: [
+           { title: "Law Book 1", price: 35, year: 2015, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht" },
+           { title: "Law Book 2", price: 30, year: 2017, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht" },
+           { title: "Law Book 3", price: 40, year: 2018, condition: "Akzeptabel", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht" },
+           { title: "Law Book 4", price: 25, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Recht"  },
+           { title: "Law Book 5", price: 18, year: 2019, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht"},
+        ],
+    };
+
           
 
         const categoryBooks = categories[category];
@@ -216,4 +313,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
-</html>
+</html> 

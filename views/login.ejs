@@ -66,3 +66,57 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('emailAddress').value;
+        const password = document.getElementById('password').value;
+        const rememberMe = document.querySelector('input[type="checkbox"]').checked;
+
+        if (username && email && password) {
+            // Simulate a login request
+            alert('Anmeldung erfolgreich!');
+            const auth_token = 'auth_token'; // Replace with actual token retrieval logic
+
+            if (rememberMe) {
+           setCookie('auth_token', auth_token, 7); // Set cookie for 7 days
+            }
+            // Redirect to the dashboard or another page
+            window.location.href = '/';
+        } else {
+            alert('Bitte füllen Sie alle Felder aus.');
+        }
+    });
+
+    // Function to set a cookie
+    function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + date.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    }
+
+    // Function to get a cookie
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // Check if the user is already logged in
+    window.onload = function() {
+        const auth_token = getCookie('auth_token');
+        if (auth_token) {
+            alert('Willkommen zurück!');
+            // Redirect to the dashboard or another page
+            window.location.href = '/';
+        }
+    };
+</script>

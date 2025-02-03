@@ -21,6 +21,7 @@
     "express": "^4.21.1",
     "html": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
+    "ngrok": "^5.0.0-beta.2",
     "node.js": "^0.0.1-security",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"

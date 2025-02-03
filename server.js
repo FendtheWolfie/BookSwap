@@ -15,6 +15,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 
 
+
 //diese folgenden 2 commands konfigurieren express die ejs templates zu verwenden
 //es wird auch deklariert, wo sich die templates befinden, hier z.B. im views folder
 
@@ -99,7 +100,7 @@ app.post('/api/registration', (req, res) => {
             }
 
             if (row) {
-                return res.status(400).json({ message: 'Email already in use' });
+                return res.status(400).json({ message: 'Email bereits vergeben' });
             }
 
             bcrypt.hash(password, 10, (err, hashedPassword) => {
@@ -122,10 +123,7 @@ app.post('/api/registration', (req, res) => {
 
 
 
-
-
-
 //direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
-app.listen(port, () => {
-    console.log(`localhost:${port}`)
+app.listen(port, '0.0.0.0', () => {
+ console.log(`Server running at http://192.168.156.254:${port}/`);
 })
