@@ -2,7 +2,8 @@
 function createCard(title, price, year, condition, level, description, image, subject) {
     return `
       <div class="col">
-        <a href="Angebotansicht.html?title=${encodeURIComponent(title)}
+        <a href="Angebotansicht
+        ?title=${encodeURIComponent(title)}
         &price=${encodeURIComponent(price)}
         &year=${encodeURIComponent(year)}
         &condition=${encodeURIComponent(condition)}
@@ -114,9 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get("category");
 
-    if (window.location.pathname.includes("kategorie.html")) {
+    if (window.location.pathname.includes("kategorie")) {
         populateCategoryBooks(category);
-    } else if (window.location.pathname.includes("Angebotansicht.html")) {
+    } else if (window.location.pathname.includes("Angebotansicht")) {
         loadBookDetails();
     } else {
         populateSection("math-section", mathBooks);

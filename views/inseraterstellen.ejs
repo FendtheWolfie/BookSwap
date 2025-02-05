@@ -90,8 +90,8 @@
 
             <!-- Beschreibung -->
             <div class="mb-3">
-                <label for="bookTitle" class="form-label">Beschreibung</label>
-                <input type="text" class="form-control" id="bookTitle" placeholder="Beschreibung des Buches angeben" required>
+                <label for="bookDescription" class="form-label">Beschreibung</label>
+                <input type="text" class="form-control" id="bookDescription" placeholder="Beschreibung des Buches angeben" required>
             </div>
 
             <!-- Bild-Upload -->
@@ -107,6 +107,23 @@
             </div>
         </form>
     </div>
+
+    <script>
+document.getElementById('Buchtitel').addEventListener('submit', function(event){}) ;{
+    const buchtitel = document.getElementById('bookTitle').value;
+    const erscheinungsjahr = document.getElementById('publicationYear').value;
+    const schulfach= document.getElementById('schoolSubject').value;
+    const zustand = document.getElementById('bookCondition').value;
+    const bildungsstufe = document.getElementById('educationLevel').value;
+    const preis = document.getElementById('price').value;
+    const beschreibung = document.getElementById('bookDescription').value;
+    const buchbild = document.getElementById('bookImage').files;
+}
+
+
+
+
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

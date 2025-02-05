@@ -13,6 +13,8 @@ const fs = require('fs');
 
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 
 
@@ -46,6 +48,8 @@ setupRoute(app, '/login','login.ejs')
 setupRoute(app, '/testdb','testdb.ejs')
 setupRoute(app, '/registrierung','registrierung.ejs')
 setupRoute(app, '/kategorie','kategorie.ejs')
+setupRoute(app, '/inseraterstellen','inseraterstellen.ejs')
+setupRoute(app, '/angebotsansicht','angebotsansicht.ejs')
 
 
 app.get('/api/data', (req, res) => {
@@ -64,7 +68,13 @@ app.get('/api/image', (req, res) => {
         image: imageBase64
     });
 })
-
+app.use(cookieParser());
+app.use(session({
+    secret: 'your_secret_key', // Replace with your secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
+}));
 
 const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqlite3.OPEN_READWRITE, (err) => {
     if (err) {
@@ -121,7 +131,41 @@ app.post('/api/registration', (req, res) => {
     });
 });
 
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    db.get("SELECT * FROM users WHERE username = ?", [username], async (err, user) => {
+        if (err) {
+            return res.status(500).send("Error logging in");
+        }
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).send("Invalid credentials");
+        }
+        const authToken = generateAuthToken(); // Generate an auth token
+        res.cookie('auth_token', authToken, { httpOnly: true }); // Save auth token as a cookie
+        req.session.userId = user.id;
+        res.status(200).send("Logged in successfully");
+    });
+});
 
+// Function to generate an auth token (you can customize this)
+function generateAuthToken() {
+    return Math.random().toString(36).substring(2); // Simple token generation for example purposes
+}
+
+// Middleware to check auth token
+function authMiddleware(req, res, next) {
+    const authToken = req.cookies.auth_token;
+    if (!authToken) {
+        return res.status(401).send("You need to log in");
+    }
+    // Here you would typically verify the auth token
+    next();
+}
+
+// Protected route example
+app.get('/dashboard', authMiddleware, (req, res) => {
+    res.send("Welcome to your dashboard");
+});
 
 //direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
 app.listen(port, '0.0.0.0', () => {
