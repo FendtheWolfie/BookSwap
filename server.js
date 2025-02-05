@@ -7,15 +7,23 @@ app.use(express.json());
 
 app.use(express.static('public'))
 
+
+
 const path = require('path');
 const { clear } = require('console');
 const fs = require('fs');
+const https = require('https');
 
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 
+
+// SSL Certificates
+const privateKey = fs.readFileSync('server.key', 'utf8');
+const certificate = fs.readFileSync('server.cert', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
 
 
 //diese folgenden 2 commands konfigurieren express die ejs templates zu verwenden
@@ -31,6 +39,7 @@ app.set('views', path.join(__dirname, 'views'));
 //    res.render('impressum.ejs')})
 //const (ein value der sich nie verändert) hier, setupRoute und es wird der inhalt definiert; routePath wird der path assigned
 //jedoch um spaghetti code zu umgehen, verweneden wir diese funktion:
+
 
 
 const setupRoute = (app, routePath, viewName) => {
@@ -69,6 +78,10 @@ app.get('/api/image', (req, res) => {
     });
 })
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // To parse form data
+app.use(express.static('public'));
+
 app.use(session({
     secret: 'your_secret_key', // Replace with your secret key
     resave: false,
@@ -131,6 +144,12 @@ app.post('/api/registration', (req, res) => {
     });
 });
 
+// Serve the login page
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+// User login route
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     db.get("SELECT * FROM users WHERE username = ?", [username], async (err, user) => {
@@ -141,7 +160,11 @@ app.post('/login', (req, res) => {
             return res.status(401).send("Invalid credentials");
         }
         const authToken = generateAuthToken(); // Generate an auth token
-        res.cookie('auth_token', authToken, { httpOnly: true }); // Save auth token as a cookie
+        res.cookie('auth_token', authToken, { 
+            httpOnly: true, 
+            sameSite: 'None', 
+            secure: true // Set to true if using HTTPS
+        }); // Save auth token as a cookie
         req.session.userId = user.id;
         res.status(200).send("Logged in successfully");
     });
@@ -166,8 +189,16 @@ function authMiddleware(req, res, next) {
 app.get('/dashboard', authMiddleware, (req, res) => {
     res.send("Welcome to your dashboard");
 });
-
+/*
 //direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
 app.listen(port, '0.0.0.0', () => {
  console.log(`Server running at http://192.168.156.254:${port}/`);
 })
+*/
+
+// Create HTTPS server
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(port, () => {
+    console.log(`HTTPS Server running at https://localhost:${port}/`);
+});
