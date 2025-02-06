@@ -28,12 +28,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="inseraterstellen.html">
+                        <a class="nav-link" href="inseraterstellen">
                             <i class="bi bi-plus"></i>
                             Angebot erstellen</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.html" class="btn btn-primary">
+                        <a class="nav-link" href="login" class="btn btn-primary">
                             <i class="bi bi-person"></i>
                             Anmelden
                         </a>
@@ -70,28 +70,28 @@
               </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Mathematik">Mathe</a>
+                <a class="nav-link" href="kategorie?category=Mathematik">Mathe</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Deutsch">Deutsch</a>
+                <a class="nav-link" href="kategorie?category=Deutsch">Deutsch</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Englisch">Englisch</a>
+                <a class="nav-link" href="kategorie?category=Englisch">Englisch</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Französisch">Französisch</a>
+                <a class="nav-link" href="kategorie?category=Französisch">Französisch</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Geografie">Geografie</a>
+                <a class="nav-link" href="kategorie?category=Geografie">Geografie</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Geschichte">Geschichte</a>
+                <a class="nav-link" href="kategorie?category=Geschichte">Geschichte</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Wirtschaft">Wirtschaft</a>
+                <a class="nav-link" href="kategorie?category=Wirtschaft">Wirtschaft</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="kategorie.html?category=Recht">Recht</a>
+                <a class="nav-link" href="kategorie?category=Recht">Recht</a>
             </li>
         </ul>
     </div>
@@ -206,7 +206,7 @@
 function createCard(title, price, year, condition, level) {
     return `
       <div class="col">
-        <a href="Angebotansicht.html?title=${encodeURIComponent(title)}&price=${price}&year=${year}&condition=${encodeURIComponent(condition)}&level=${encodeURIComponent(level)}" class="text-decoration-none">
+        <a href="Angebotansicht?title=${encodeURIComponent(title)}&price=${price}&year=${year}&condition=${encodeURIComponent(condition)}&level=${encodeURIComponent(level)}" class="text-decoration-none">
           <div class="card">
             <div class="card-body">
               <div class="bg-secondary" style="height: 150px;"></div>

@@ -80,8 +80,6 @@
         const password = document.getElementById('password').value;
         const rememberMe = document.querySelector('input[type="checkbox"]').checked;
 
-        
-
         if (username && email && password) {
             // Simulate a login request
             fetch('/api/login', {
@@ -97,36 +95,33 @@
                     alert('Anmeldung erfolgreich!');
                     const auth_token = data.auth_token;
 
-                if (rememberMe) {
-                setCookie('auth_token', auth_token, 7); // Set cookie for 7 days
+                    // Set the auth token as a cookie if "remember me" is checked
+                    if (rememberMe) {
+                        setCookie('auth_token', auth_token, 7); // Cookie expires in 7 days
+                        window.location.href = '/';
+                    }
+
+                    // Redirect to the dashboard or another page
+                    window.location.href = '/';
                 } else {
-                setCookie('auth_token', auth_token, 1); // Set cookie for 1 day
+                    alert('Anmeldung fehlgeschlagen: ' + data.message);
                 }
-                // Redirect to the dashboard or another page
-                window.location.href = '/';
-            } else {
-                alert('Anmeldung fehlgeschlagen: ' + data.message);
-            }
             })
-            .catch(error => {
-            console.error('Error:', error);
-            alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
-            });
         } else {
             alert('Bitte füllen Sie alle Felder aus.');
         }
-        });
+    });
 
-        // Function to set a cookie
-        function setCookie(name, value, days) {
+    // Function to set a cookie
+    function setCookie(name, value, days) {
         const date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         const expires = "expires=" + date.toUTCString();
         document.cookie = name + "=" + value + ";" + expires + ";path=/";
-        }
+    }
 
-        // Function to get a cookie
-        function getCookie(name) {
+    // Function to get a cookie
+    function getCookie(name) {
         const nameEQ = name + "=";
         const ca = document.cookie.split(';');
         for (let i = 0; i < ca.length; i++) {
@@ -135,17 +130,18 @@
             if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
         }
         return null;
-        }
+    }
 
-        // Check if the user is already logged in
-        window.onload = function() {
+    // Check if the user is already logged in
+    window.onload = function() {
         const auth_token = getCookie('auth_token');
         if (auth_token) {
             alert('Willkommen zurück!');
             // Redirect to the dashboard or another page
             window.location.href = '/';
         }
-        };
+    };
+</script>
 
 
 </script>

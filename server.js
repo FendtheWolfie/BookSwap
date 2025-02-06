@@ -18,6 +18,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const crypto = require('crypto');
 
 
 // SSL Certificates
@@ -103,14 +104,12 @@ app.post('/api/registration', (req, res) => {
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            auth_token TEXT DEFAULT (hex(randomblob(4))),
             username TEXT UNIQUE,
             password TEXT,
             email TEXT UNIQUE,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `;
-
     db.run(createTableSql, (err) => {
         if (err) {
             return res.status(500).json({ message: 'Error creating table' });
@@ -123,56 +122,37 @@ app.post('/api/registration', (req, res) => {
             }
 
             if (row) {
-                return res.status(400).json({ message: 'Email bereits vergeben' });
+                return res.status(400).json({ message: 'Email already in use' });
             }
 
-            bcrypt.hash(password, 10, (err, hashedPassword) => {
+            const hashedPassword = crypto.createHash('md5').update(password).digest('hex');
+
+            const insertUserSql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
+            db.run(insertUserSql, [username, hashedPassword, email], (err) => {
                 if (err) {
-                    return res.status(500).json({ message: 'Error hashing password' });
+                    return res.status(500).json({ message: 'Username already in use' });
                 }
 
-                const insertUserSql = `INSERT INTO users (username, password, email) VALUES (?, ?, ?)`;
-                db.run(insertUserSql, [username, hashedPassword, email], (err) => {
-                    if (err) {
-                        return res.status(500).json({ message: 'Benutzername bereits vergeben' });
-                    }
-
-                    res.status(200).json({ message: 'User registered successfully' });
-                });
+                res.status(200).json({ message: 'User registered successfully' });
             });
         });
-    });
-});
-
-// Serve the login page
-app.get('/login', (req, res) => {
-    res.render('login');
-});
-
-// User login route
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    db.get("SELECT * FROM users WHERE username = ?", [username], async (err, user) => {
-        if (err) {
-            return res.status(500).send("Error logging in");
-        }
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).send("Invalid credentials");
-        }
-        const authToken = generateAuthToken(); // Generate an auth token
-        res.cookie('auth_token', authToken, { 
-            httpOnly: true, 
-            sameSite: 'None', 
-            secure: true // Set to true if using HTTPS
-        }); // Save auth token as a cookie
-        req.session.userId = user.id;
-        res.status(200).send("Logged in successfully");
     });
 });
 
 // Function to generate an auth token (you can customize this)
 function generateAuthToken() {
     return Math.random().toString(36).substring(2); // Simple token generation for example purposes
+}
+
+// Save auth token into the database
+function saveAuthToken(userId, authToken, callback) {
+    const updateTokenSql = `UPDATE users SET auth_token = ? WHERE id = ?`;
+    db.run(updateTokenSql, [authToken, userId], (err) => {
+        if (err) {
+            return callback(err);
+        }
+        callback(null);
+    });
 }
 
 // Middleware to check auth token
@@ -182,13 +162,76 @@ function authMiddleware(req, res, next) {
         return res.status(401).send("You need to log in");
     }
     // Here you would typically verify the auth token
-    next();
+    db.get("SELECT * FROM users WHERE auth_token = ?", [authToken], (err, user) => {
+        if (err || !user) {
+            return res.status(401).send("Invalid auth token");
+        }
+        req.user = user; // Attach user information to the request object
+        next();
+    });
 }
 
 // Protected route example
 app.get('/dashboard', authMiddleware, (req, res) => {
     res.send("Welcome to your dashboard");
 });
+
+// User login route
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    db.get("SELECT * FROM users WHERE username = ?", [username], async (err, user) => {
+        if (err) {
+            return res.status(500).send("Error logging in");
+        }
+        if (!user) {
+            return res.status(401).send("Invalid credentials");
+        }
+        const hashedPassword = crypto.createHash('md5').update(password).digest('hex');
+        if (hashedPassword !== user.password) {
+            return res.status(401).send("Invalid credentials");
+        }
+        const authToken = generateAuthToken(); // Generate an auth token
+        saveAuthToken(user.id, authToken, (err) => {
+            if (err) {
+                return res.status(500).send("Error saving auth token");
+            }
+            res.cookie('auth_token', authToken, { 
+                httpOnly: true, 
+                sameSite: 'None', 
+                secure: true  
+            }); // Save auth token as a cookie
+            req.session.userId = user.id;
+            res.status(200).json({
+                success: true
+            });
+        });
+    });
+});
+
+/*
+app.post('/api/upload', (req, res) => {
+    const {... } = req.body;
+
+    const createTableSql = `
+        CREATE TABLE IF NOT EXISTS books (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            auth_token TEXT DEFAULT (hex(randomblob(4))),
+            username TEXT UNIQUE,
+            password TEXT,
+            email TEXT UNIQUE,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `};
+    db.run(createTableSql, (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error creating table' });
+        }
+      
+}));
+*/
+
+
+
 /*
 //direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
 app.listen(port, '0.0.0.0', () => {
