@@ -204,6 +204,7 @@ function generateAuthToken() {
 app.get('/protected', authMiddleware, (req, res) => {
     res.render('protected.ejs');
 });
+
 app.post('/api/images', authMiddleware, (req, res) => {
     const { buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung } = req.body;
     const authToken = req.cookies.auth_token; // Get the auth token from the cookies
@@ -238,8 +239,8 @@ app.post('/api/images', authMiddleware, (req, res) => {
                 return res.status(401).json({ message: 'Invalid auth token' });
             }
 
-            const insertBookSql = `INSERT INTO books (auth_token, username, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.run(insertBookSql, [authToken, user.username, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung], (err) => {
+            const insertBookSql = `INSERT INTO books (auth_token, username, filelocation, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.run(insertBookSql, [authToken, user.username, null, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung], (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error inserting book' });
                 }
@@ -273,4 +274,4 @@ const httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(port, () => {
     console.log(`HTTPS Server running at https://localhost:${port}/`);
-});
+})

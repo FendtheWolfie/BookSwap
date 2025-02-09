@@ -11,7 +11,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="logo-transparent-svg.svg" alt="BookSwap Logo" height="50">
+                <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50">
             </a>
         </div>
     </nav>
@@ -119,7 +119,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('form').addEventListener('submit', function(event) {
                     event.preventDefault();
 
-                    const username = data.username;
                     const buchtitel = document.getElementById('bookTitle').value;
                     const erscheinungsjahr = document.getElementById('publicationYear').value;
                     const schulfach = document.getElementById('schoolSubject').value;
@@ -130,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const buchbild = document.getElementById('bookImage').files;
 
                     const formData = new FormData();
-                    formData.append('username', username);
                     formData.append('buchtitel', buchtitel);
                     formData.append('erscheinungsjahr', erscheinungsjahr);
                     formData.append('schulfach', schulfach);
@@ -138,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('bildungsstufe', bildungsstufe);
                     formData.append('preis', preis);
                     formData.append('beschreibung', beschreibung);
+
                     for (let i = 0; i < buchbild.length; i++) {
                         formData.append('buchbild', buchbild[i]);
                     }
