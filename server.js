@@ -238,14 +238,16 @@ app.post('/api/images', authMiddleware, (req, res) => {
             if (!user) {
                 return res.status(401).json({ message: 'Invalid auth token' });
             }
-
             const insertBookSql = `INSERT INTO books (auth_token, username, filelocation, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             db.run(insertBookSql, [authToken, user.username, null, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung], (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error inserting book' });
                 }
 
-                res.status(200).json({ message: 'Book inserted successfully' });
+                res.status(200).json({
+                    message: 'Book inserted successfully',
+                    success: true
+                });
             });
         });
     });
