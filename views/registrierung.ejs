@@ -96,9 +96,6 @@
             alert('Registrierung erfolgreich!');
             window.location.href = '/login'; // Redirect to login page
             document.getElementById('registrationForm').insertAdjacentHTML('beforeend', `
-                <div class="alert alert-success mt-3" role="alert">
-                Registrierung Erfolgreich: ${data.message}. <a href="login">Falls Sie nicht automatisch weitergeleitet werden, klicken Sie bitte hier.</a>
-                </div>
             `);
             } else {
             alert('Registrierung fehlgeschlagen: ' + data.message);
