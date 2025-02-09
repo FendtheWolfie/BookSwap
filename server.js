@@ -133,7 +133,11 @@ app.post('/api/registration', (req, res) => {
                     return res.status(500).json({ message: 'Username already in use' });
                 }
 
-                res.status(200).json({ message: 'User registered successfully' });
+                res.status(200).json({
+                    message: 'User registered successfully',
+                    success: true
+                });
+
             });
         });
     });

@@ -72,6 +72,20 @@
 </body>
 </html>
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/check-login')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                alert('Wilkommen, Bitte melden Sie sich an oder kreieren einen neuen account');
+            } else {
+                alert('Wilkommen zurück');
+                window.location.href = '/';
+                    }  
+                });
+            });
+
     document.querySelector('form').addEventListener('submit', function(event) {
         event.preventDefault();
         
@@ -80,8 +94,9 @@
         const password = document.getElementById('password').value;
         const rememberMe = document.querySelector('input[type="checkbox"]').checked;
 
+
+        //login request wird gesendet
         if (username && email && password) {
-            // Simulate a login request
             fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -95,13 +110,9 @@
                     alert('Anmeldung erfolgreich!');
                     const auth_token = data.auth_token;
 
-                    // Set the auth token as a cookie if "remember me" is checked
                     if (rememberMe) {
                         setCookie('auth_token', auth_token, 7); // Cookie expires in 7 days
-                        window.location.href = '/';
                     }
-
-                    // Redirect to the dashboard or another page
                     window.location.href = '/';
                 } else {
                     alert('Anmeldung fehlgeschlagen: ' + data.message);
