@@ -97,13 +97,13 @@ const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqli
         console.log('Connected to the userinformation.db database.');
     }
 });
-
 app.post('/api/registration', (req, res) => {
     const { username, password, email } = req.body;
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            auth_token TEXT UNIQUE,
             username TEXT UNIQUE,
             password TEXT,
             email TEXT UNIQUE,
@@ -139,43 +139,6 @@ app.post('/api/registration', (req, res) => {
     });
 });
 
-// Function to generate an auth token (you can customize this)
-function generateAuthToken() {
-    return Math.random().toString(36).substring(2); // Simple token generation for example purposes
-}
-
-// Save auth token into the database
-function saveAuthToken(userId, authToken, callback) {
-    const updateTokenSql = `UPDATE users SET auth_token = ? WHERE id = ?`;
-    db.run(updateTokenSql, [authToken, userId], (err) => {
-        if (err) {
-            return callback(err);
-        }
-        callback(null);
-    });
-}
-
-// Middleware to check auth token
-function authMiddleware(req, res, next) {
-    const authToken = req.cookies.auth_token;
-    if (!authToken) {
-        return res.status(401).send("You need to log in");
-    }
-    // Here you would typically verify the auth token
-    db.get("SELECT * FROM users WHERE auth_token = ?", [authToken], (err, user) => {
-        if (err || !user) {
-            return res.status(401).send("Invalid auth token");
-        }
-        req.user = user; // Attach user information to the request object
-        next();
-    });
-}
-
-// Protected route example
-app.get('/dashboard', authMiddleware, (req, res) => {
-    res.send("Welcome to your dashboard");
-});
-
 // User login route
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
@@ -191,16 +154,18 @@ app.post('/api/login', (req, res) => {
             return res.status(401).send("Invalid credentials");
         }
         const authToken = generateAuthToken(); // Generate an auth token
-        saveAuthToken(user.id, authToken, (err) => {
+        res.cookie('auth_token', authToken, { 
+            httpOnly: true, 
+            sameSite: 'None', 
+            secure: true  
+        }); // Save auth token as a cookie
+
+        // Save auth token in the database
+        const updateAuthTokenSql = `UPDATE users SET auth_token = ? WHERE id = ?`;
+        db.run(updateAuthTokenSql, [authToken, user.id], (err) => {
             if (err) {
                 return res.status(500).send("Error saving auth token");
             }
-            res.cookie('auth_token', authToken, { 
-                httpOnly: true, 
-                sameSite: 'None', 
-                secure: true  
-            }); // Save auth token as a cookie
-            req.session.userId = user.id;
             res.status(200).json({
                 success: true
             });
@@ -208,36 +173,96 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-/*
-app.post('/api/upload', (req, res) => {
-    const {... } = req.body;
+// Middleware to check auth token
+function authMiddleware(req, res, next) {
+    const authToken = req.cookies.auth_token;
+    if (!authToken) {
+        return res.status(401).send("You need to log in");
+    }
+    // Verify the auth token
+    const checkAuthTokenSql = `SELECT * FROM users WHERE auth_token = ?`;
+    db.get(checkAuthTokenSql, [authToken], (err, user) => {
+        if (err) {
+            return res.status(500).send("Error verifying auth token");
+        }
+        if (!user) {
+            return res.status(401).send("Invalid auth token");
+        }
+        req.user = user; // Attach user to request object
+        next();
+    });
+}
+
+function generateAuthToken() {
+    return crypto.randomBytes(30).toString('hex');
+}
+// Protect specific subsite
+app.get('/protected', authMiddleware, (req, res) => {
+    res.render('protected.ejs');
+});
+app.post('/api/images', authMiddleware, (req, res) => {
+    const { buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung } = req.body;
+    const authToken = req.cookies.auth_token; // Get the auth token from the cookies
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS books (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            auth_token TEXT DEFAULT (hex(randomblob(4))),
-            username TEXT UNIQUE,
-            password TEXT,
-            email TEXT UNIQUE,
-            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            auth_token TEXT,
+            username TEXT,
+            Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            filelocation TEXT,
+            buchtitel TEXT,
+            erscheinungsjahr INTEGER,
+            schulfach TEXT,
+            zustand TEXT,
+            bildungsstufe TEXT,
+            preis INTEGER,
+            beschreibung TEXT
         )
-    `};
+    `;
     db.run(createTableSql, (err) => {
         if (err) {
             return res.status(500).json({ message: 'Error creating table' });
         }
-      
-}));
-*/
 
+        const getUserSql = `SELECT username FROM users WHERE auth_token = ?`;
+        db.get(getUserSql, [authToken], (err, user) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error fetching user' });
+            }
+            if (!user) {
+                return res.status(401).json({ message: 'Invalid auth token' });
+            }
 
+            const insertBookSql = `INSERT INTO books (auth_token, username, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.run(insertBookSql, [authToken, user.username, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Error inserting book' });
+                }
 
-/*
-//direkter link zur seite mit integriertem port - wenn dieser wechselt wird der link immernoch funktionnieren
-app.listen(port, '0.0.0.0', () => {
- console.log(`Server running at http://192.168.156.254:${port}/`);
-})
-*/
+                res.status(200).json({ message: 'Book inserted successfully' });
+            });
+        });
+    });
+});
+
+app.get('/api/check-login', (req, res) => {
+    const authToken = req.cookies.auth_token;
+    if (!authToken) {
+        return res.status(401).json({ loggedIn: false, message: 'Not logged in' });
+    }
+
+    const checkAuthTokenSql = `SELECT * FROM users WHERE auth_token = ?`;
+    db.get(checkAuthTokenSql, [authToken], (err, user) => {
+        if (err) {
+            return res.status(500).json({ loggedIn: false, message: 'Error verifying auth token' });
+        }
+        if (!user) {
+            return res.status(401).json({ loggedIn: false, message: 'Invalid auth token' });
+        }
+        res.status(200).json({ loggedIn: true, message: 'User is logged in' });
+    });
+});
 
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);
