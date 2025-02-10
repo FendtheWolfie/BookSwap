@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors')
 const port = 4000
 
+
 app.use(express.json());
 
 app.use(express.static('public'))
@@ -18,6 +19,7 @@ const sqlite3 = require('sqlite3').verbose();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const crypto = require('crypto');
+const multer = require('multer');
 
 
 // SSL Certificates
@@ -69,6 +71,7 @@ app.get('/api/data', (req, res) => {
 })
 
 
+/*
 app.get('/api/image', (req, res) => {
     const imagePath = path.join(__dirname, 'public', 'images', 'fox.png');
     const imageBase64 = fs.readFileSync(imagePath, 'base64');
@@ -78,6 +81,8 @@ app.get('/api/image', (req, res) => {
         image: imageBase64
     });
 })
+*/
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // To parse form data
@@ -105,7 +110,7 @@ app.post('/api/registration', (req, res) => {
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             webauthentication TEXT DEFAULT (hex(randomblob(4))),
-            auth_token TEXT UNIQUE,
+            auth_token TEXT,
             username TEXT UNIQUE,
             password TEXT,
             email TEXT UNIQUE,  
@@ -210,12 +215,22 @@ app.get('/login', authMiddleware, (req, res) => {
     res.render('login.ejs');
 });
 */
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads'); // Replace with your desired destination folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
 
+const upload = multer({ storage: storage });
 
-
-app.post('/api/images', authMiddleware, (req, res) => {
-    const { buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung } = req.body;
+app.post('/api/upload', authMiddleware, upload.single('image'), (req, res) => {
+    const { bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription } = req.body;
     const authToken = req.cookies.auth_token; // Get the auth token from the cookies
+    const imagePath = req.file ? req.file.path : null; // Get the uploaded image path
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS books (
@@ -224,13 +239,13 @@ app.post('/api/images', authMiddleware, (req, res) => {
             username TEXT,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             filelocation TEXT,
-            buchtitel TEXT,
-            erscheinungsjahr INTEGER,
-            schulfach TEXT,
-            zustand TEXT,
-            bildungsstufe TEXT,
-            preis INTEGER,
-            beschreibung TEXT
+            bookTitle TEXT,
+            publicationYear INTEGER,
+            schoolSubject TEXT,
+            bookCondition TEXT,
+            educationLevel TEXT,
+            price INTEGER,
+            bookDescription TEXT
         )
     `;
     db.run(createTableSql, (err) => {
@@ -238,7 +253,6 @@ app.post('/api/images', authMiddleware, (req, res) => {
             return res.status(500).json({ message: 'Error creating table' });
         }
 
-      
         const getUserSql = `SELECT webauthentication, username FROM users WHERE auth_token = ?`;
         db.get(getUserSql, [authToken], (err, user) => {
             if (err) {
@@ -247,8 +261,8 @@ app.post('/api/images', authMiddleware, (req, res) => {
             if (!user) {
                 return res.status(401).json({ message: 'Invalid auth token' });
             }
-            const insertBookSql = `INSERT INTO books (webauthentication, username, filelocation, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.run(insertBookSql, [authToken, user.username, null, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung], (err) => {
+            const insertBookSql = `INSERT INTO books (webauthentication, username, filelocation, bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.run(insertBookSql, [user.webauthentication, user.username, imagePath, bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription], (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error inserting book' });
                 }
