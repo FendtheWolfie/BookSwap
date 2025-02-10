@@ -105,7 +105,6 @@
                 <label for="bookImage" class="form-label">Bild des Buches hochladen</label>
                 <input type="file" class="form-control" id="bookImage" accept="image/*" multiple required>
                 <small class="text-muted">Maximal 5 Bilder, nur Bildformate (jpg, png, jpeg).</small>
-                
             </div>
 
             <!-- Submit Button -->
@@ -131,9 +130,13 @@
                             const educationLevel = document.getElementById('educationLevel').value;
                             const price = document.getElementById('price').value;
                             const bookDescription = document.getElementById('bookDescription').value;
-                            const bookImage = document.getElementById('bookImage').files[0];
+                            const bookImages = document.getElementById('bookImage').files;
 
                             const formData = new FormData();
+
+                            for (let i = 0; i < bookImages.length; i++) {
+                                formData.append('bookImages', bookImages[i]);
+                            }
                             formData.append('bookTitle', bookTitle);
                             formData.append('publicationYear', publicationYear);
                             formData.append('schoolSubject', schoolSubject);
@@ -141,12 +144,12 @@
                             formData.append('educationLevel', educationLevel);
                             formData.append('price', price);
                             formData.append('bookDescription', bookDescription);
-                            formData.append('image', bookImage);
+
 
                             fetch('/api/upload', {
                                 method: 'POST',
                                 body: formData,
-                                credentials: 'include' // Include cookies in the request
+                                credentials: 'include'
                             })
                                 .then(response => response.json())
                                 .then(data => {

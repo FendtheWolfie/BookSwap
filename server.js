@@ -3,12 +3,8 @@ const app = express();
 const cors = require('cors')
 const port = 4000
 
-
 app.use(express.json());
-
 app.use(express.static('public'))
-
-
 
 const path = require('path');
 const { clear } = require('console');
@@ -21,18 +17,15 @@ const session = require('express-session');
 const crypto = require('crypto');
 const multer = require('multer');
 
-
 // SSL Certificates
 const privateKey = fs.readFileSync('server.key', 'utf8');
 const certificate = fs.readFileSync('server.cert', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
-
 //diese folgenden 2 commands konfigurieren express die ejs templates zu verwenden
 //es wird auch deklariert, wo sich die templates befinden, hier z.B. im views folder
 
 app.set('view engine', 'ejs');
-
 app.set('views', path.join(__dirname, 'views'));
 
 //test
@@ -41,8 +34,6 @@ app.set('views', path.join(__dirname, 'views'));
 //    res.render('impressum.ejs')})
 //const (ein value der sich nie verändert) hier, setupRoute und es wird der inhalt definiert; routePath wird der path assigned
 //jedoch um spaghetti code zu umgehen, verweneden wir diese funktion:
-
-
 
 const setupRoute = (app, routePath, viewName) => {
     app.get(routePath, (req, res) => {
@@ -69,7 +60,6 @@ app.get('/api/data', (req, res) => {
             text: 'hbhhjbhhj'
     })
 })
-
 
 /*
 app.get('/api/image', (req, res) => {
@@ -208,7 +198,6 @@ function generateAuthToken() {
     return crypto.randomBytes(30).toString('hex');
 }
 
-
 /*
 // Protect specific subsite
 app.get('/login', authMiddleware, (req, res) => {
@@ -216,9 +205,10 @@ app.get('/login', authMiddleware, (req, res) => {
 });
 */
 // Configure multer for file uploads
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/uploads'); // Replace with your desired destination folder
+        cb(null, 'public/uploads'); 
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + '-' + file.originalname);
@@ -227,10 +217,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/api/upload', authMiddleware, upload.single('image'), (req, res) => {
+app.post('/api/upload', authMiddleware, upload.array('bookImages', 5), (req, res) => {
     const { bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription } = req.body;
     const authToken = req.cookies.auth_token; // Get the auth token from the cookies
     const imagePath = req.file ? req.file.path : null; // Get the uploaded image path
+
+    let filelocation = "";
+    for (let i = 0; i < req.files.length; i++) {
+        filelocation += req.files[i].path + ";";
+    }
+
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS books (
@@ -261,9 +257,15 @@ app.post('/api/upload', authMiddleware, upload.single('image'), (req, res) => {
             if (!user) {
                 return res.status(401).json({ message: 'Invalid auth token' });
             }
+            
+            "webauthentication, username, filelocation, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription"
+
             const insertBookSql = `INSERT INTO books (webauthentication, username, filelocation, bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.run(insertBookSql, [user.webauthentication, user.username, imagePath, bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription], (err) => {
+            db.run(insertBookSql, [user.webauthentication, user.username, filelocation, bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription], (err) => {
                 if (err) {
+                    console.log(err.name);
+                    console.log(err.message);
+                    console.log(err.stack);
                     return res.status(500).json({ message: 'Error inserting book' });
                 }
 
