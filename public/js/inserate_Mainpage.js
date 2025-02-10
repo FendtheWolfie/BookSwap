@@ -2,8 +2,7 @@
 function createCard(title, price, year, condition, level, description, image, subject) {
     return `
       <div class="col">
-        <a href="Angebotansicht
-        ?title=${encodeURIComponent(title)}
+        <a href="Angebotsansicht?title=${encodeURIComponent(title)}
         &price=${encodeURIComponent(price)}
         &year=${encodeURIComponent(year)}
         &condition=${encodeURIComponent(condition)}
@@ -117,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (window.location.pathname.includes("kategorie")) {
         populateCategoryBooks(category);
-    } else if (window.location.pathname.includes("Angebotansicht")) {
+    } else if (window.location.pathname.includes("Angebotsansicht")) {
         loadBookDetails();
     } else {
         populateSection("math-section", mathBooks);

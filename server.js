@@ -15,7 +15,6 @@ const fs = require('fs');
 const https = require('https');
 
 const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const crypto = require('crypto');
@@ -60,6 +59,7 @@ setupRoute(app, '/registrierung','registrierung.ejs')
 setupRoute(app, '/kategorie','kategorie.ejs')
 setupRoute(app, '/inseraterstellen','inseraterstellen.ejs')
 setupRoute(app, '/angebotsansicht','angebotsansicht.ejs')
+setupRoute(app, '/kaufen','kaufen.ejs')
 
 
 app.get('/api/data', (req, res) => {
@@ -97,16 +97,18 @@ const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqli
         console.log('Connected to the userinformation.db database.');
     }
 });
+
 app.post('/api/registration', (req, res) => {
     const { username, password, email } = req.body;
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            webauthentication TEXT DEFAULT (hex(randomblob(4))),
             auth_token TEXT UNIQUE,
             username TEXT UNIQUE,
             password TEXT,
-            email TEXT UNIQUE,
+            email TEXT UNIQUE,  
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `;
@@ -200,10 +202,16 @@ function authMiddleware(req, res, next) {
 function generateAuthToken() {
     return crypto.randomBytes(30).toString('hex');
 }
+
+
+/*
 // Protect specific subsite
-app.get('/protected', authMiddleware, (req, res) => {
-    res.render('protected.ejs');
+app.get('/login', authMiddleware, (req, res) => {
+    res.render('login.ejs');
 });
+*/
+
+
 
 app.post('/api/images', authMiddleware, (req, res) => {
     const { buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung } = req.body;
@@ -212,7 +220,7 @@ app.post('/api/images', authMiddleware, (req, res) => {
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS books (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            auth_token TEXT,
+            webauthentication TEXT,
             username TEXT,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
             filelocation TEXT,
@@ -230,7 +238,8 @@ app.post('/api/images', authMiddleware, (req, res) => {
             return res.status(500).json({ message: 'Error creating table' });
         }
 
-        const getUserSql = `SELECT username FROM users WHERE auth_token = ?`;
+      
+        const getUserSql = `SELECT webauthentication, username FROM users WHERE auth_token = ?`;
         db.get(getUserSql, [authToken], (err, user) => {
             if (err) {
                 return res.status(500).json({ message: 'Error fetching user' });
@@ -238,7 +247,7 @@ app.post('/api/images', authMiddleware, (req, res) => {
             if (!user) {
                 return res.status(401).json({ message: 'Invalid auth token' });
             }
-            const insertBookSql = `INSERT INTO books (auth_token, username, filelocation, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            const insertBookSql = `INSERT INTO books (webauthentication, username, filelocation, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             db.run(insertBookSql, [authToken, user.username, null, buchtitel, erscheinungsjahr, schulfach, zustand, bildungsstufe, preis, beschreibung], (err) => {
                 if (err) {
                     return res.status(500).json({ message: 'Error inserting book' });

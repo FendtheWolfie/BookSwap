@@ -20,7 +20,7 @@
         <div class="container">
             <!-- Logo -->
             <a class="navbar-brand" href="#">
-                <img src="logo-transparent-svg.svg" alt="BookSwap Logo" height="50"> <!-- Replace with your SVG logo -->
+                <a href='/'> <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50"> <!-- Replace with your SVG logo -->
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -206,7 +206,7 @@
 function createCard(title, price, year, condition, level) {
     return `
       <div class="col">
-        <a href="Angebotansicht?title=${encodeURIComponent(title)}&price=${price}&year=${year}&condition=${encodeURIComponent(condition)}&level=${encodeURIComponent(level)}" class="text-decoration-none">
+        <a href="Angebotsansicht?title=${encodeURIComponent(title)}&price=${price}&year=${year}&condition=${encodeURIComponent(condition)}&level=${encodeURIComponent(level)}" class="text-decoration-none">
           <div class="card">
             <div class="card-body">
               <div class="bg-secondary" style="height: 150px;"></div>
