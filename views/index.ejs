@@ -201,7 +201,6 @@
             <a href="#">AKB</a> | <a href="#">Support</a> | <a href="#">Social Media</a>
         </div>
     </footer>
-
     <!--Offcanvas-->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
       <div class="offcanvas-header">
@@ -210,7 +209,7 @@
       </div>
       <div class="offcanvas-body">
         <div class="offcanvas-body">
-            <form>
+            <form id="filter-form">
                 <!-- Schulfach Dropdown -->
                 <div class="mb-3">
                     <label for="subject" class="form-label">Schulfach</label>
@@ -292,45 +291,33 @@
                 </div>
 
                 <!-- Suchbutton -->
-                <button type="submit" class="btn btn-primary" onclick="searchBooks(event)">Suchen</button>
+                <button type="submit" class="btn btn-primary">Suchen</button>
             </form>
             <div id="search-results" class="mt-4"></div>
+        </div>
+      </div>
+    </div>
 
-            <script>
-                async function searchBooks(event) {
-                    event.preventDefault();
-                    const searchTerm = document.querySelector('#subject').value;
-                    const searchResults = document.querySelector('#search-results');
-                    searchResults.innerHTML = '';
+    <script>
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const subject = document.getElementById('subject').value;
+            const year = document.getElementById('year').value;
+            const bookCondition = document.querySelector('input[name="bookCondition"]:checked')?.value;
+            const level = document.getElementById('level').value;
+            const price = document.getElementById('price').value;
 
-                    try {
-                        const response = await fetch('/api/upload');
-                        const books = await response.json();
+            const queryParams = new URLSearchParams({
+                subject,
+                year,
+                bookCondition,
+                level,
+                price
+            });
 
-                        const filteredBooks = books.filter(book => book.category === searchTerm);
-
-                        if (filteredBooks.length > 0) {
-                            filteredBooks.forEach(book => {
-                                const bookElement = document.createElement('div');
-                                bookElement.className = 'col';
-                                bookElement.innerHTML = `
-                                    <div class="card h-100">
-                                        <div class="card-body">
-                                            <h5 class="card-title">${book.title}</h5>
-                                            <p class="card-text">${book.category}</p>
-                                        </div>
-                                    </div>
-                                `;
-                                searchResults.appendChild(bookElement);
-                            });
-                        } else {
-                            searchResults.innerHTML = '<p>Keine Bücher gefunden</p>';
-                        }
-                    } catch (error) {
-                        searchResults.innerHTML = '<p>Fehler beim Laden der Bücher</p>';
-                    }
-                }
-            </script>
+            window.location.href = `/filter?${queryParams.toString()}`;
+        });
+    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

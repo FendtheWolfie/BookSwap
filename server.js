@@ -54,6 +54,7 @@ setupRoute(app, '/inseraterstellen','inseraterstellen.ejs')
 setupRoute(app, '/angebotsansicht','angebotsansicht.ejs')
 setupRoute(app, '/kaufen','kaufen.ejs')
 setupRoute(app, '/search','search.ejs')
+setupRoute(app, '/filter','filter.ejs')
 
 
 app.get('/api/data', (req, res) => {
