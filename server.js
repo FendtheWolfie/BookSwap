@@ -53,6 +53,7 @@ setupRoute(app, '/kategorie','kategorie.ejs')
 setupRoute(app, '/inseraterstellen','inseraterstellen.ejs')
 setupRoute(app, '/angebotsansicht','angebotsansicht.ejs')
 setupRoute(app, '/kaufen','kaufen.ejs')
+setupRoute(app, '/search','search.ejs')
 
 
 app.get('/api/data', (req, res) => {
@@ -216,17 +217,15 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
 app.post('/api/upload', authMiddleware, upload.array('bookImages', 5), (req, res) => {
     const { bookTitle, publicationYear, schoolSubject, bookCondition, educationLevel, price, bookDescription } = req.body;
     const authToken = req.cookies.auth_token; // Get the auth token from the cookies
-    const imagePath = req.file ? req.file.path : null; // Get the uploaded image path
 
     let filelocation = "";
     for (let i = 0; i < req.files.length; i++) {
-        filelocation += req.files[i].path + ";";
+        filelocation += req.files[i].path.replace(/^public\//, '') + ";";
+        console.log(req.files[i].path);
     }
-
 
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS books (
@@ -295,6 +294,22 @@ app.get('/api/check-login', (req, res) => {
         res.status(200).json({ loggedIn: true, message: 'User is logged in' });
     });
 });
+
+
+app.get('/api/books', (_, res) => {
+    const getBooksSql = `SELECT * FROM books`;
+    db.all(getBooksSql, [], (err, rows) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching books' });
+        }
+        const books = rows.map(book => ({
+            ...book,
+            filelocation: book.filelocation.split(';').map(path => `https://localhost:4000/${path.replace(/^public\//, '')}`).join(';')
+        }));
+        res.status(200).json({ books });
+    });
+});
+
 
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);

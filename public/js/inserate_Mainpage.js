@@ -13,7 +13,9 @@ function createCard(title, price, year, condition, level, description, image, su
         class="text-decoration-none">
           <div class="card">
             <div class="card-body">
-              <div class="bg-secondary" style="height: 150px;"></div>
+              <div class="image-container" style="width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #f0f0f0;">
+                <img src="${image || "https://via.placeholder.com/250"}" class="card-img-top" alt="Buchbild" style="max-width: 100%; max-height: 100%; object-fit: contain;"/>
+              </div>
               <h5 class="card-title mt-3">${title}</h5>
               <p class="card-text">Preis: ${price} CHF</p>
               <p class="card-text">Erscheinungsjahr: ${year}</p>
@@ -26,65 +28,32 @@ function createCard(title, price, year, condition, level, description, image, su
     `;
 }
 
-// 🔵 Funktion für die detaillierte Buchkarte (Angebotsansicht)
-function createCardForDetails(title, price, year, condition, level, description, image, subject) {
-    return `
-      <div class="col">
-        <div class="card">
-          <img src="${image || "https://via.placeholder.com/250"}" class="card-img-top" alt="Buchbild"/>
-          <div class="card-body">
-            <h5 class="card-title mt-3">${title}</h5>
-            <p class="card-text">Preis: ${price} CHF</p>
-            <p class="card-text">Erscheinungsjahr: ${year}</p>
-            <p class="card-text">Zustand: ${condition}</p>
-            <p class="card-text">Niveau: ${level}</p>
-            <p class="card-text"><strong>Schulfach:</strong> ${subject || "Schulfach nicht angegeben"}</p>
-            <p class="card-text"><strong>Beschreibung:</strong> ${description || "Keine Beschreibung verfügbar"}</p>
-          </div>
-        </div>
-      </div>
-    `;
-}
-
 // 🟢 Funktion zur Anzeige der Mainpage-Bücher (übersichtliche Karten)
 function populateSection(sectionId, books) {
     const section = document.getElementById(sectionId);
     if (!section) return;
     section.innerHTML = "";
     books.forEach((book) => {
+        const firstImage = book.filelocation.split(';')[0];
         section.innerHTML += createCard(
-            book.title, book.price, book.year, book.condition, book.level,
-            book.description, book.image, book.subject
+            book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
+            book.bookDescription, firstImage, book.schoolSubject
         );
     });
 }
 
 // 🟢 Funktion zur Anzeige der Kategorieseite (nutzt `createCard()`)
-function populateCategoryBooks(category) {
-    const categories = {
-        Mathematik: mathBooks,
-        Deutsch: germanBooks,
-        Englisch: englishBooks,
-        Französisch: frenchBooks,
-        Wirtschaft: economicsBooks,
-        Geografie: geographyBooks,
-        Geschichte: historyBooks,
-        Recht: lawBooks
-    };
-
-    const categoryBooks = categories[category];
-    if (!categoryBooks) {
-        document.getElementById("category-section").innerHTML = "Keine Kategorie gefunden";
-        return;
-    }
-
+function populateCategoryBooks(category, books) {
     const section = document.getElementById("category-section");
     section.innerHTML = "";
-    categoryBooks.forEach((book) => {
-        section.innerHTML += createCard(
-            book.title, book.price, book.year, book.condition, book.level,
-            book.description, book.image, book.subject
-        );
+    books.forEach((book) => {
+        if (book.schoolSubject === category) {
+            const firstImage = book.filelocation.split(';')[0];
+            section.innerHTML += createCard(
+                book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
+                book.bookDescription, firstImage, book.schoolSubject
+            );
+        }
     });
 }
 
@@ -109,87 +78,36 @@ function loadBookDetails() {
     );
 }
 
+// 🟢 Funktion zum Abrufen der Buchdaten von der API
+async function fetchBooks() {
+    try {
+        const response = await fetch('/api/books');
+        const data = await response.json();
+        return data.books;
+    } catch (error) {
+        console.error('Error fetching books:', error);
+        return [];
+    }
+}
+
 // 🔥 ERKENNEN, WELCHE SEITE GELADEN WIRD
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const books = await fetchBooks();
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get("category");
 
     if (window.location.pathname.includes("kategorie")) {
-        populateCategoryBooks(category);
+        populateCategoryBooks(category, books);
     } else if (window.location.pathname.includes("Angebotsansicht")) {
         loadBookDetails();
     } else {
-        populateSection("math-section", mathBooks);
-        populateSection("german-section", germanBooks);
-        populateSection("english-section", englishBooks);
-        populateSection("french-section", frenchBooks);
-        populateSection("economics-section", economicsBooks);
-        populateSection("geography-section", geographyBooks);
-        populateSection("history-section", historyBooks);
-        populateSection("law-section", lawBooks);
+        populateSection("math-section", books.filter(book => book.schoolSubject === "Mathematik"));
+        populateSection("german-section", books.filter(book => book.schoolSubject === "Deutsch"));
+        populateSection("english-section", books.filter(book => book.schoolSubject === "Englisch"));
+        populateSection("french-section", books.filter(book => book.schoolSubject === "Französisch"));
+        populateSection("economics-section", books.filter(book => book.schoolSubject === "Wirtschaft"));
+        populateSection("geography-section", books.filter(book => book.schoolSubject === "Geografie"));
+        populateSection("history-section", books.filter(book => book.schoolSubject === "Geschichte"));
+        populateSection("law-section", books.filter(book => book.schoolSubject === "Recht"));
     }
 });
-// Books data for all categories
-const mathBooks = [
-    { title: "Math Book 1", price: 20, year: 2015, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Mathematik"  },
-    { title: "Math Book 2", price: 25, year: 2018, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Mathematik"  },
-    { title: "Math Book 3", price: 30, year: 2020, condition: "Akzeptabel", level: "Kantonsschule" , description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Mathematik" },
-    { title: "Math Book 4", price: 15, year: 2012, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Mathematik"  },
-    { title: "Math Book 5", price: 10, year: 2021, condition: "Wie neu", level: "Universität" , description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Mathematik" },
-];
-
-const germanBooks = [
-    { title: "German Book 1", price: 18, year: 2013, condition: "Wie neu", level: "Realschule" , description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Deutsch" },
-    { title: "German Book 2", price: 22, year: 2015, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Deutsch"  },
-    { title: "German Book 3", price: 28, year: 2018, condition: "Akzeptabel", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Deutsch" },
-    { title: "German Book 4", price: 12, year: 2012, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Deutsch" },
-    { title: "German Book 5", price: 16, year: 2020, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Deutsch"  },
-];
-
-const englishBooks = [
-    { title: "English Book 1", price: 20, year: 2014, condition: "Guter Zustand", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
-    { title: "English Book 2", price: 22, year: 2016, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
-    { title: "English Book 3", price: 18, year: 2017, condition: "Wie neu", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
-    { title: "English Book 4", price: 30, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Englisch" },
-    { title: "English Book 5", price: 25, year: 2019, condition: "Guter Zustand", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Englisch"  },
-];
-
-const frenchBooks = [
-    { title: "French Book 1", price: 25, year: 2015, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Französisch" },
-    { title: "French Book 2", price: 20, year: 2013, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Französisch"  },
-    { title: "French Book 3", price: 22, year: 2019, condition: "Guter Zustand", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Französisch" },
-    { title: "French Book 4", price: 18, year: 2016, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Französisch"  },
-    { title: "French Book 5", price: 15, year: 2018, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Französisch" },
-];
-
-const economicsBooks = [
-    { title: "Economics Book 1", price: 30, year: 2017, condition: "Guter Zustand", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
-    { title: "Economics Book 2", price: 28, year: 2015, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
-    { title: "Economics Book 3", price: 25, year: 2018, condition: "Wie neu", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
-    { title: "Economics Book 4", price: 20, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
-    { title: "Economics Book 5", price: 22, year: 2019, condition: "Guter Zustand", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
-];
-
-const geographyBooks = [
-    { title: "Geography Book 1", price: 18, year: 2013, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geografie"  },
-    { title: "Geography Book 2", price: 22, year: 2015, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geografie"  },
-    { title: "Geography Book 3", price: 30, year: 2017, condition: "Akzeptabel", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geografie"  },
-    { title: "Geography Book 4", price: 15, year: 2018, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geografie" },
-    { title: "Geography Book 5", price: 25, year: 2020, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Wirtschaft"  },
-];
-
-const historyBooks = [
-    { title: "History Book 1", price: 20, year: 2014, condition: "Guter Zustand", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geschichte"  },
-    { title: "History Book 2", price: 18, year: 2016, condition: "Akzeptabel", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geschichte" },
-    { title: "History Book 3", price: 28, year: 2018, condition: "Wie neu", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geschichte" },
-    { title: "History Book 4", price: 25, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Geschichte"  },
-    { title: "History Book 5", price: 30, year: 2019, condition: "Guter Zustand", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Geschichte" },
-];
-
-const lawBooks = [
-    { title: "Law Book 1", price: 35, year: 2015, condition: "Wie neu", level: "Realschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht" },
-    { title: "Law Book 2", price: 30, year: 2017, condition: "Guter Zustand", level: "Sekundarschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht" },
-    { title: "Law Book 3", price: 40, year: 2018, condition: "Akzeptabel", level: "Kantonsschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht" },
-    { title: "Law Book 4", price: 25, year: 2021, condition: "Stark gebraucht", level: "Hochschule", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda", image: "https://via.placeholder.com/250", subject: "Recht"  },
-    { title: "Law Book 5", price: 18, year: 2019, condition: "Wie neu", level: "Universität", description :"SADDDDASDsSjidhuiajsdiojsadjiooasdjiosadijosadoijsadsaoijkda" , image: "https://via.placeholder.com/250", subject: "Recht"},
-];
