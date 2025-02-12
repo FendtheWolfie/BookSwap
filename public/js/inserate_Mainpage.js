@@ -1,7 +1,7 @@
 // 🟢 Funktion für die minimalistische Buchkarte (Mainpage & Kategorie)
 function createCard(title, price, year, condition, level, description, image, subject, webauthentication) {
     return `
-        <div class="col">
+        <div class="col" style="flex: 0 0 300px; margin-right: 20px;">
             <a href="Angebotsansicht?title=${encodeURIComponent(title)}
             &price=${encodeURIComponent(price)}
             &year=${encodeURIComponent(year)}

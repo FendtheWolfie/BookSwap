@@ -362,6 +362,21 @@ app.post('/get-user-email', (req, res) => {
 });
 
 
+app.post('/remove-listing', authMiddleware, (req, res) => {
+    const { listingId } = req.body;
+
+    const deleteListingSql = `DELETE FROM books WHERE id = ?`;
+    db.run(deleteListingSql, [listingId], function(err) {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Error removing listing' });
+        }
+        if (this.changes === 0) {
+            return res.status(404).json({ success: false, message: 'Listing not found' });
+        }
+        res.status(200).json({ success: true, message: 'Listing removed successfully' });
+    });
+});
+
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);
 

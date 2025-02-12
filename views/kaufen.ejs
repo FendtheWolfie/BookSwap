@@ -101,16 +101,35 @@
     </div>
 
     <script>
-        // Inserat entfernen (Entfernt nur Infos, nicht die E-Mail)
+        // Inserat entfernen (Entfernt das gesamte Inserat)
         document.getElementById("remove-listing").addEventListener("click", function() {
             if (confirm("Möchtest du dieses Inserat wirklich entfernen?")) {
                 alert("Das Inserat wurde entfernt. Bitte kontaktiere den Verkäufer nun per E-Mail.");
 
-                //  Entferne nur die Inserat-Infos, nicht die ganze Card!
-                document.getElementById("listing-info").remove();
-                this.remove(); // Entfernt den Button selbst
+                // Send request to server to remove the listing
+                fetch('/remove-listing', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ listingId: 'your-listing-id' }) // Replace 'your-listing-id' with the actual listing ID
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the entire card
+                        document.querySelector(".card").remove();
+                    } else {
+                        alert("Fehler beim Entfernen des Inserats. Bitte versuche es erneut.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing listing:', error);
+                    alert("Fehler beim Entfernen des Inserats. Bitte versuche es erneut.");
+                });
             }
         });
+  
     </script>
 
 </body>
