@@ -230,44 +230,131 @@
                 </div>
             `;
             }
-
             // Function to populate books based on the selected filters
-         
-        function populateBooks() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const schoolSubject = urlParams.get('schoolSubject');
-            const year = urlParams.get('year');
-            const bookCondition = urlParams.get('bookCondition');
-            const level = urlParams.get('level');
-            const price = urlParams.get('price');
-
-            console.log('Filters:', { schoolSubject, year, bookCondition, level, price });
-
-            let query = '/api/books?';
-            if (schoolSubject) query += `schoolSubject=${encodeURIComponent(schoolSubject)}&`;
-            if (year) query += `year=${encodeURIComponent(year)}&`;
-            if (bookCondition) query += `bookCondition=${encodeURIComponent(bookCondition)}&`;
-            if (level) query += `level=${encodeURIComponent(level)}&`;
-            if (price) query += `price=${encodeURIComponent(price)}&`;
-
-            fetch(query.slice(0, -1)) // Remove the trailing '&'
-            .then(response => response.json())
-            .then(data => {
-                const categorySection = document.getElementById('category-section');
-                categorySection.innerHTML = '';
-                if (Array.isArray(data)) {
-                    data.forEach(book => {
-                        const card = createCard(book.title, book.price, book.year, book.condition, book.level, book.description, book.image, book.subject, book.webauthentication);
-                        categorySection.innerHTML += card;
+            function populateFilteredBooks(filters, books) {
+                const section = document.getElementById("category-section");
+                section.innerHTML = "";
+                books.forEach((book) => {
+                    let matches = true;
+                    for (const key in filters) {
+                        if (filters[key] && filters[key] !== "undefined") {
+                            if (key === "price") {
+                                const [minPrice, maxPrice] = filters[key].split('-').map(Number);
+                                if (book.price < minPrice || (maxPrice && book.price > maxPrice)) {
+                                    matches = false;
+                                    break;
+                                }
+                            } else if (key === "publicationYear" && parseInt(filters[key]) !== book.publicationYear) {
+                                matches = false;
+                                break;
+                            } else if (key !== "price" && key !== "publicationYear" && filters[key] !== book[key]) {
+                                matches = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (matches) {
+                        const firstImage = book.filelocation.split(';')[0];
+                        section.innerHTML += createCard(
+                            book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
+                            book.bookDescription, firstImage, book.schoolSubject, book.webauthentication
+                        );
+                    }
                     });
-                } else {
-                    console.error('Error: Expected an array but got', data);
                 }
-            })
-            .catch(error => console.error('Error fetching books:', error));
-        }
 
-        document.addEventListener('DOMContentLoaded', populateBooks);
+            // Function to populate books based on the selected category
+            function populateCategoryBooks(category, books) {
+                const section = document.getElementById("category-section");
+                section.innerHTML = "";
+                books.forEach((book) => {
+                    if (book.schoolSubject === category) {
+                        const firstImage = book.filelocation.split(';')[0];
+                        section.innerHTML += createCard(
+                            book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
+                            book.bookDescription, firstImage, book.schoolSubject, book.webauthentication
+                        );
+                    }
+                });
+            }
+
+            // Function to populate sections with books
+            function populateSection(sectionId, books) {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+                section.innerHTML = "";
+                books.forEach((book) => {
+                    const firstImage = book.filelocation.split(';')[0];
+                    section.innerHTML += createCard(
+                        book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
+                        book.bookDescription, firstImage, book.schoolSubject, book.webauthentication
+                    );
+                });
+            }
+
+            // Function to load book details
+            function loadBookDetails() {
+                function getUrlParameter(name) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.has(name) ? decodeURIComponent(urlParams.get(name)) : "Nicht verfügbar";
+                }
+
+                const title = getUrlParameter("title");
+                const price = getUrlParameter("price");
+                const year = getUrlParameter("year");
+                const condition = getUrlParameter("condition");
+                const level = getUrlParameter("level");
+                const description = getUrlParameter("description");
+                const image = getUrlParameter("image");
+                const subject = getUrlParameter("subject");
+
+                document.getElementById("book-details").innerHTML = createCardForDetails(
+                    title, price, year, condition, level, description, image, subject
+                );
+            }
+
+            // Function to fetch books from the API
+            async function fetchBooks() {
+                try {
+                    const response = await fetch('/api/books');
+                    const data = await response.json();
+                    return data.books;
+                } catch (error) {
+                    console.error('Error fetching books:', error);
+                    return [];
+                }
+            }
+
+            // Detect which page is loaded and populate accordingly
+            document.addEventListener("DOMContentLoaded", async () => {
+                const books = await fetchBooks();
+                const urlParams = new URLSearchParams(window.location.search);
+                const filters = {
+                    schoolSubject: urlParams.get("schoolSubject"),
+                    publicationYear: urlParams.get("year"),
+                    bookCondition: urlParams.get("bookCondition"),
+                    educationLevel: urlParams.get("level"),
+                    price: urlParams.get("price")
+                };
+                const category = urlParams.get("category");
+
+                if (window.location.pathname.includes("filter")) {
+                    populateFilteredBooks(filters, books);
+                } else if (window.location.pathname.includes("kategorie")) {
+                    populateCategoryBooks(category, books);
+                } else if (window.location.pathname.includes("Angebotsansicht")) {
+                    loadBookDetails();
+                } else {
+                    populateSection("math-section", books.filter(book => book.schoolSubject === "Mathematik"));
+                    populateSection("german-section", books.filter(book => book.schoolSubject === "Deutsch"));
+                    populateSection("english-section", books.filter(book => book.schoolSubject === "Englisch"));
+                    populateSection("french-section", books.filter(book => book.schoolSubject === "Französisch"));
+                    populateSection("economics-section", books.filter(book => book.schoolSubject === "Wirtschaft"));
+                    populateSection("geography-section", books.filter(book => book.schoolSubject === "Geografie"));
+                    populateSection("history-section", books.filter(book => book.schoolSubject === "Geschichte"));
+                    populateSection("law-section", books.filter(book => book.schoolSubject === "Recht"));
+                }
+            });
 
             // Search functionality
             function searchItems() {
