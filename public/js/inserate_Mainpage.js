@@ -1,31 +1,33 @@
 // 🟢 Funktion für die minimalistische Buchkarte (Mainpage & Kategorie)
 function createCard(title, price, year, condition, level, description, image, subject, webauthentication) {
     return `
-      <div class="col">
-        <a href="Angebotsansicht?title=${encodeURIComponent(title)}
-        &price=${encodeURIComponent(price)}
-        &year=${encodeURIComponent(year)}
-        &condition=${encodeURIComponent(condition)}
-        &level=${encodeURIComponent(level)}
-        &description=${encodeURIComponent(description || "Keine Beschreibung verfügbar")}
-        &image=${encodeURIComponent(image || "https://via.placeholder.com/250")}
-        &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}
-        &webauthentication=${encodeURIComponent(webauthentication)}">
-            <div class="card-body">
-              <div class="image-container" style="width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #f0f0f0;">
-                <img src="${image || "https://via.placeholder.com/250"}" class="card-img-top" alt="Buchbild" style="max-width: 100%; max-height: 100%; object-fit: contain;"/>
-              </div>
-              <h5 class="card-title mt-3">${title}</h5>
-              <p class="card-text">Preis: ${price} CHF</p>
-              <p class="card-text">Erscheinungsjahr: ${year}</p>
-              <p class="card-text">Zustand: ${condition}</p>
-              <p class="card-text">Niveau: ${level}</p>
-            </div>
-          </a>
+        <div class="col">
+            <a href="Angebotsansicht?title=${encodeURIComponent(title)}
+            &price=${encodeURIComponent(price)}
+            &year=${encodeURIComponent(year)}
+            &condition=${encodeURIComponent(condition)}
+            &level=${encodeURIComponent(level)}
+            &description=${encodeURIComponent(description || "Keine Beschreibung verfügbar")}
+            &image=${encodeURIComponent(image || "https://via.placeholder.com/250")}
+            &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}
+            &webauthentication=${encodeURIComponent(webauthentication)}">
+            <div class="card">
+                    <div class="card-body">
+                        <div class="image-container" style="width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #f0f0f0;">
+                            <img src="${image || "https://via.placeholder.com/250"}" class="card-img-top" alt="Buchbild" style="max-width: 100%; max-height: 100%; object-fit: contain;"/>
+                        </div>
+                        <h5 class="card-title mt-3">${title}</h5>
+                        <p class="card-text">Preis: ${price} CHF</p>
+                        <p class="card-text">Erscheinungsjahr: ${year}</p>
+                        <p class="card-text">Zustand: ${condition}</p>
+                        <p class="card-text">Niveau: ${level}</p>
+                    </div>
+                </div>
+            </a>
         </div>
-      </div>
     `;
 }
+
 
 // 🟢 Funktion zur Anzeige der Mainpage-Bücher (übersichtliche Karten)
 function populateSection(sectionId, books) {

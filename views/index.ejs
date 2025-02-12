@@ -213,7 +213,7 @@
                 <!-- Schulfach Dropdown -->
                 <div class="mb-3">
                     <label for="subject" class="form-label">Schulfach</label>
-                    <select id="subject" class="form-select" name="subject">
+                    <select id="schoolSubject" class="form-select" name="schoolSubject">
                         <option value="">Bitte wählen...</option>
                         <option value="Mathematik">Mathematik</option>
                         <option value="Deutsch">Deutsch</option>
@@ -300,14 +300,14 @@
     <script>
         document.getElementById('filter-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            const subject = document.getElementById('subject').value;
+            const schoolSubject = document.getElementById('schoolSubject').value;
             const year = document.getElementById('year').value;
             const bookCondition = document.querySelector('input[name="bookCondition"]:checked')?.value;
             const level = document.getElementById('level').value;
             const price = document.getElementById('price').value;
 
             const queryParams = new URLSearchParams({
-            subject,
+            schoolSubject,
             year,
             bookCondition,
             level,
