@@ -87,13 +87,13 @@ app.use(session({
     cookie: { secure: false } // Set to true if using HTTPS
 }));
 
-const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqlite3.OPEN_READWRITE, (err) => {
-    if (err) {
-        console.error(err.message);
-    } else {
-        console.log('Connected to the userinformation.db database.');
-    }
-});
+    const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqlite3.OPEN_READWRITE, (err) => {
+        if (err) {
+            console.error(err.message);
+        } else {
+            console.log('Connected to the userinformation.db database.');
+        }
+    });
 
 app.post('/api/registration', (req, res) => {
     const { username, password, email } = req.body;

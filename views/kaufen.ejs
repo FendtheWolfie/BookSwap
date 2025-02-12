@@ -43,7 +43,22 @@
     <div class="container mt-5">
         <h2 class="text-center">Kaufinteresse für das Inserat</h2>
 
-        <!-- Info zum Verkäufer, da muesch no schaffe de e mail innetueh -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/api/check-login')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.loggedIn) {
+                window.location.href = '/login';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+});
+</script>
+<!-- Info zum Verkäufer, da muesch no schaffe de e mail innetueh -->
+</script>
         <div class="card mt-4">
             <div class="card-body text-center">
                 <h5 class="card-title">Verkäufer kontaktieren</h5>
@@ -140,8 +155,9 @@
                 console.log("User canceled removal");
                 }
             });
-            });
-        </script>
-        </div>
-    </body>
+                });
+            </script>
+                </div>
+            </div>
+        </body>
     </html>
