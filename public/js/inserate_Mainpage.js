@@ -1,5 +1,5 @@
 // 🟢 Funktion für die minimalistische Buchkarte (Mainpage & Kategorie)
-function createCard(title, price, year, condition, level, description, image, subject) {
+function createCard(title, price, year, condition, level, description, image, subject, webauthentication) {
     return `
       <div class="col">
         <a href="Angebotsansicht?title=${encodeURIComponent(title)}
@@ -9,9 +9,8 @@ function createCard(title, price, year, condition, level, description, image, su
         &level=${encodeURIComponent(level)}
         &description=${encodeURIComponent(description || "Keine Beschreibung verfügbar")}
         &image=${encodeURIComponent(image || "https://via.placeholder.com/250")}
-        &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}" 
-        class="text-decoration-none">
-          <div class="card">
+        &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}
+        &webauthentication=${encodeURIComponent(webauthentication)}">
             <div class="card-body">
               <div class="image-container" style="width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #f0f0f0;">
                 <img src="${image || "https://via.placeholder.com/250"}" class="card-img-top" alt="Buchbild" style="max-width: 100%; max-height: 100%; object-fit: contain;"/>
@@ -22,8 +21,8 @@ function createCard(title, price, year, condition, level, description, image, su
               <p class="card-text">Zustand: ${condition}</p>
               <p class="card-text">Niveau: ${level}</p>
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
       </div>
     `;
 }
@@ -37,7 +36,7 @@ function populateSection(sectionId, books) {
         const firstImage = book.filelocation.split(';')[0];
         section.innerHTML += createCard(
             book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
-            book.bookDescription, firstImage, book.schoolSubject
+            book.bookDescription, firstImage, book.schoolSubject, book.webauthentication
         );
     });
 }
@@ -51,7 +50,7 @@ function populateCategoryBooks(category, books) {
             const firstImage = book.filelocation.split(';')[0];
             section.innerHTML += createCard(
                 book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
-                book.bookDescription, firstImage, book.schoolSubject
+                book.bookDescription, firstImage, book.schoolSubject,  book.webauthentication
             );
         }
     });
@@ -72,9 +71,10 @@ function loadBookDetails() {
     const description = getUrlParameter("description");
     const image = getUrlParameter("image");
     const subject = getUrlParameter("subject");
+    const webauthentication = getUrlParameter("webauthentication");
 
     document.getElementById("book-details").innerHTML = createCardForDetails(
-        title, price, year, condition, level, description, image, subject
+        title, price, year, condition, level, description, image, subject, webauthentication
     );
 }
 

@@ -95,42 +95,6 @@ const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqli
     }
 });
 
-setInterval(() => {
-    const checkBooksSql = `SELECT id, filelocation FROM books`;
-    db.all(checkBooksSql, [], (err, rows) => {
-        if (err) {
-            console.error('Error fetching books:', err.message);
-            return;
-        }
-        rows.forEach(book => {
-            if (!book.filelocation) {
-                // Delete book if filelocation is empty
-                const deleteBookSql = `DELETE FROM books WHERE id = ?`;
-                db.run(deleteBookSql, [book.id], (err) => {
-                    if (err) {
-                        console.error('Error deleting book:', err.message);
-                    } else {
-                        console.log(`Deleted book with id ${book.id} due to empty filelocation`);
-                    }
-                });
-            } else {
-                // Remove ALL occurrences of "public/"
-                const updatedFilelocation = book.filelocation.replace(/public[\\/]/g, '');
-                
-                // Update database with cleaned filelocation
-                const updateBookSql = `UPDATE books SET filelocation = ? WHERE id = ?`;
-                db.run(updateBookSql, [updatedFilelocation, book.id], (err) => {
-                    if (err) {
-                        console.error('Error updating book filelocation:', err.message);
-                    }
-                });
-            }
-        });
-    });
-}, 5000); // Run every 5 seconds
-
-
-
 app.post('/api/registration', (req, res) => {
     const { username, password, email } = req.body;
 
@@ -332,6 +296,39 @@ app.get('/api/check-login', (req, res) => {
     });
 });
 
+setInterval(() => {
+    const checkBooksSql = `SELECT id, filelocation FROM books`;
+    db.all(checkBooksSql, [], (err, rows) => {
+        if (err) {
+            console.error('Error fetching books:', err.message);
+            return;
+        }
+        rows.forEach(book => {
+            if (!book.filelocation) {
+                // Delete book if filelocation is empty
+                const deleteBookSql = `DELETE FROM books WHERE id = ?`;
+                db.run(deleteBookSql, [book.id], (err) => {
+                    if (err) {
+                        console.error('Error deleting book:', err.message);
+                    } else {
+                        console.log(`Deleted book with id ${book.id} due to empty filelocation`);
+                    }
+                });
+            } else {
+                // Remove ALL occurrences of "public/"
+                const updatedFilelocation = book.filelocation.replace(/public[\\/]/g, '');
+                
+                // Update database with cleaned filelocation
+                const updateBookSql = `UPDATE books SET filelocation = ? WHERE id = ?`;
+                db.run(updateBookSql, [updatedFilelocation, book.id], (err) => {
+                    if (err) {
+                        console.error('Error updating book filelocation:', err.message);
+                    }
+                });
+            }
+        });
+    });
+}, 5000); // Run every 5 seconds
 
 app.get('/api/books', (_, res) => {
     const getBooksSql = `SELECT * FROM books`;
@@ -343,7 +340,24 @@ app.get('/api/books', (_, res) => {
             ...book,
             filelocation: book.filelocation.split(';').map(path => `https://localhost:4000/${path.replace(/^public\//, '')}`).join(';')
         }));
+        console.log('Sending books data:', books);
         res.status(200).json({ books });
+    });
+});
+
+
+
+app.post('/get-user-email', (req, res) => {
+    const { webauthentication } = req.body;
+    const getEmailSql = `SELECT email FROM users WHERE webauthentication = ?`;
+    db.get(getEmailSql, [webauthentication], (err, row) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error fetching email' });
+        }
+        if (!row) {
+            return res.status(404).json({ message: 'Email not found' });
+        }
+        res.status(200).json({ email: row.email });
     });
 });
 

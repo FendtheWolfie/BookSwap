@@ -15,21 +15,24 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50">
-            </a>
+                    <!-- Logo -->
+                    <a class="navbar-brand" href="/">
+                        <button class="btn btn-link p-0" style="border: none;">
+                            <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50" />
+                        </button>
+                    </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="inseraterstellen.html">
+                        <a class="nav-link" href="inseraterstellen">
                             <i class="bi bi-plus"></i> Angebot erstellen
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="login.html">
+                        <a class="nav-link" href="login">
                             <i class="bi bi-person"></i> Anmelden
                         </a>
                     </li>
@@ -45,12 +48,46 @@
         <!-- Info zum Verkäufer, da muesch no schaffe de e mail innetueh -->
         <div class="card mt-4">
             <div class="card-body text-center">
-                <h5 class="card-title">Verkäufer kontaktieren</h5>
-                <p><strong>Kontakt-E-Mail:</strong> <a id="seller-email" href="#">Lade...</a></p>
-                <div id="listing-info">
+            <h5 class="card-title">Verkäufer kontaktieren</h5>
+            <p><strong>Kontakt-E-Mail:</strong> <a id="seller-email" href="#">Lade...</a></p>
+            <div id="listing-info">
          
             </div>
         </div>
+        <script>
+            // Retrieve email from cookie
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const webauthentication = getCookie('webauthentication');
+
+                // Fetch email from userinformation.db
+                fetch('/get-user-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ webauthentication })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.email) {
+                        document.getElementById('seller-email').textContent = data.email;
+                        document.getElementById('seller-email').href = `mailto:${data.email}`;
+                    } else {
+                        document.getElementById('seller-email').textContent = 'E-Mail nicht gefunden';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching email:', error);
+                    document.getElementById('seller-email').textContent = 'Fehler beim Laden der E-Mail';
+                });
+            });
+        </script>
 
         <!-- Entfernen-Button -->
         <button id="remove-listing" class="btn btn-danger mt-3 w-100">Inserat entfernen</button>
