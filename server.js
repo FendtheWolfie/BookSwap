@@ -231,6 +231,7 @@ app.post('/api/upload', authMiddleware, upload.array('bookImages', 5), (req, res
     const createTableSql = `
         CREATE TABLE IF NOT EXISTS books (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            bookid TEXT DEFAULT (hex(randomblob(4))),
             webauthentication TEXT,
             username TEXT,
             Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -345,22 +346,67 @@ app.get('/api/books', (_, res) => {
     });
 });
 
-
-
 app.post('/get-user-email', (req, res) => {
-    const { webauthentication } = req.body;
-    const getEmailSql = `SELECT email FROM users WHERE webauthentication = ?`;
-    db.get(getEmailSql, [webauthentication], (err, row) => {
+    const { bookid } = req.body;
+
+    const getBookSql = `SELECT webauthentication FROM books WHERE bookid = ?`;
+    db.get(getBookSql, [bookid], (err, book) => {
         if (err) {
-            return res.status(500).json({ message: 'Error fetching email' });
+            return res.status(500).json({ message: 'Error fetching book' });
         }
-        if (!row) {
-            return res.status(404).json({ message: 'Email not found' });
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
         }
-        res.status(200).json({ email: row.email });
+
+        const getUserEmailSql = `SELECT email FROM users WHERE webauthentication = ?`;
+        db.get(getUserEmailSql, [book.webauthentication], (err, user) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error fetching user email' });
+            }
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            res.status(200).json({ email: user.email });
+        });
     });
 });
 
+
+app.post('/remove-listing', authMiddleware, (req, res) => {
+    const { bookid } = req.body;
+    console.log('Received request to remove listing with bookid:', bookid);
+
+    const getBookSql = `SELECT filelocation FROM books WHERE bookid = ?`;
+    db.get(getBookSql, [bookid], (err, book) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Error fetching book' });
+        }
+        if (!book) {
+            return res.status(404).json({ success: false, message: 'Book not found' });
+        }
+
+        const fileLocations = book.filelocation.split(';').filter(Boolean);
+        fileLocations.forEach(filePath => {
+            const fullPath = path.join(__dirname, 'public', filePath);
+            fs.unlink(fullPath, (err) => {
+                if (err) {
+                    console.error(`Error deleting file ${fullPath}:`, err.message);
+                } else {
+                    console.log(`Deleted file ${fullPath}`);
+                }
+            });
+        });
+
+        const deleteBookSql = `DELETE FROM books WHERE bookid = ?`;
+        db.run(deleteBookSql, [bookid], (err) => {
+            if (err) {
+                return res.status(500).json({ success: false, message: 'Error removing listing' });
+            }
+            res.status(200).json({ success: true, message: 'Listing removed successfully' });
+        });
+    });
+});
 
 // Create HTTPS server
 const httpsServer = https.createServer(credentials, app);

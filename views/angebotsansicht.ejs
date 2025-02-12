@@ -1,5 +1,5 @@
 <script>
-    function createCard(title, price, year, condition, level, description, image, subject, webauthentication) {
+    function createCard(title, price, year, condition, level, description, image, subject, bookid, webauthentication) {
         return `
           <div class="col">
             <a href="Angebotsansicht?title=${encodeURIComponent(title)}
@@ -10,6 +10,7 @@
             &description=${encodeURIComponent(description || "Keine Beschreibung verfügbar")}
             &image=${encodeURIComponent(image || "https://via.placeholder.com/250")}
             &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}
+            &bookid=${encodeURIComponent(bookid)}
             &webauthentication=${encodeURIComponent(webauthentication)}"
                 <div class="card-body">
                   <img src="${image || "https://via.placeholder.com/250"}" class="card-img-top" alt="Buchbild"/>
@@ -25,7 +26,7 @@
         `;
     }
 
-    function createCardForDetails(title, price, year, condition, level, description, image, subject, webauthentication) {
+    function createCardForDetails(title, price, year, condition, level, description, image, subject, bookid, webauthentication) {
         return `
           <div class="col">
             <div class="card">
@@ -285,9 +286,9 @@
             <hr>
             <script>
                 function setWebAuthCookie() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const webauthentication = urlParams.get('webauthentication') || '';
-                    document.cookie = `webauthentication=${webauthentication}; max-age=2; path=/`;
+                    const bookid = getUrlParameter('bookid');
+                    document.cookie = `bookid=${bookid}; path=/`;
+                    console.log(`Cookie set: bookid=${bookid}`);
                 }
             </script>
             <p><strong>Erscheinungsjahr:</strong> <span id="book-year">2019</span></p>
@@ -318,6 +319,7 @@
             const description = getUrlParameter("description");
             const image = getUrlParameter("image");
             const subject = getUrlParameter("subject");
+            const bookid = getUrlParameter("bookid");
             const webauthentication = getUrlParameter("webauthentication");
 
             document.getElementById("book-title").textContent = title;

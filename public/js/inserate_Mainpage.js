@@ -1,5 +1,5 @@
 // 🟢 Funktion für die minimalistische Buchkarte (Mainpage & Kategorie)
-function createCard(title, price, year, condition, level, description, image, subject, webauthentication) {
+function createCard(title, price, year, condition, level, description, image, subject, bookid, webauthentication) {
     return `
         <div class="col">
             <a href="Angebotsansicht?title=${encodeURIComponent(title)}
@@ -10,6 +10,7 @@ function createCard(title, price, year, condition, level, description, image, su
             &description=${encodeURIComponent(description || "Keine Beschreibung verfügbar")}
             &image=${encodeURIComponent(image || "https://via.placeholder.com/250")}
             &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}
+            &bookid=${encodeURIComponent(bookid)}
             &webauthentication=${encodeURIComponent(webauthentication)}">
             <div class="card">
                     <div class="card-body">
@@ -38,7 +39,7 @@ function populateSection(sectionId, books) {
         const firstImage = book.filelocation.split(';')[0];
         section.innerHTML += createCard(
             book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
-            book.bookDescription, firstImage, book.schoolSubject, book.webauthentication
+            book.bookDescription, firstImage, book.schoolSubject, book.bookid, book.webauthentication
         );
     });
 }
@@ -52,7 +53,7 @@ function populateCategoryBooks(category, books) {
             const firstImage = book.filelocation.split(';')[0];
             section.innerHTML += createCard(
                 book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel,
-                book.bookDescription, firstImage, book.schoolSubject,  book.webauthentication
+                book.bookDescription, firstImage, book.schoolSubject, book.bookid,  book.webauthentication
             );
         }
     });
@@ -73,10 +74,11 @@ function loadBookDetails() {
     const description = getUrlParameter("description");
     const image = getUrlParameter("image");
     const subject = getUrlParameter("subject");
+    const bookid = getUrlParameter("bookid");
     const webauthentication = getUrlParameter("webauthentication");
 
     document.getElementById("book-details").innerHTML = createCardForDetails(
-        title, price, year, condition, level, description, image, subject, webauthentication
+        title, price, year, condition, level, description, image, subject, bookid, webauthentication
     );
 }
 

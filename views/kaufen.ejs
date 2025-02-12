@@ -8,19 +8,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-      
 </head>
 <body>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-                    <!-- Logo -->
-                    <a class="navbar-brand" href="/">
-                        <button class="btn btn-link p-0" style="border: none;">
-                            <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50" />
-                        </button>
-                    </a>
+            <!-- Logo -->
+            <a class="navbar-brand" href="/">
+                <button class="btn btn-link p-0" style="border: none;">
+                    <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50" />
+                </button>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -41,77 +40,108 @@
         </div>
     </nav>
 
-    
     <div class="container mt-5">
         <h2 class="text-center">Kaufinteresse für das Inserat</h2>
 
         <!-- Info zum Verkäufer, da muesch no schaffe de e mail innetueh -->
         <div class="card mt-4">
             <div class="card-body text-center">
-            <h5 class="card-title">Verkäufer kontaktieren</h5>
-            <p><strong>Kontakt-E-Mail:</strong> <a id="seller-email" href="#">Lade...</a></p>
-            <div id="listing-info">
-         
+                <h5 class="card-title">Verkäufer kontaktieren</h5>
+                <p><strong>Kontakt-E-Mail:</strong> <a id="seller-email" href="#">Lade...</a></p>
+                <div id="listing-info"></div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        // Get the bookid cookie
+                        let bookId = document.cookie.split("; ").find(row => row.startsWith("bookid="))?.split("=")[1];
+                        if (bookId) {
+                            bookId = decodeURIComponent(bookId);
+                        }
+
+                        if (bookId) {
+                            // Send the bookid to the server to get the email
+                            fetch('/get-user-email', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ bookid: bookId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.email) {
+                                    document.getElementById("seller-email").textContent = data.email;
+                                    document.getElementById("seller-email").href = "mailto:" + data.email;
+                                } else {
+                                    document.getElementById("seller-email").textContent = "E-Mail nicht gefunden";
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                document.getElementById("seller-email").textContent = "Fehler beim Laden der E-Mail";
+                            });
+                        } else {
+                            document.getElementById("seller-email").textContent = "Kein Buch-ID-Cookie gefunden";
+                        }
+                    });
+                </script>
+
+                <!-- Entfernen-Button -->
+                <button id="remove-listing" class="btn btn-danger mt-3 w-100">Inserat entfernen</button>
+
+                <!-- Erklärung -->
+                <div class="alert alert-info mt-4">
+                    <strong>Wichtige Information:</strong> Wenn du dieses Inserat unbedingt haben möchtest, entferne es hier und kontaktiere den Verkäufer privat über die angegebene E-Mail-Adresse.  
+                    <br><br>
+                    <strong>⚠ Hinweis:</strong> BookSwap bietet derzeit keine integrierte Kaufabwicklung an. Der Kauf erfolgt auf eigene Verantwortung!
+                </div>
             </div>
         </div>
         <script>
-            // Retrieve email from cookie
-            function getCookie(name) {
-                const value = `; ${document.cookie}`;
-                const parts = value.split(`; ${name}=`);
-                if (parts.length === 2) return parts.pop().split(';').shift();
-            }
+            // Inserat entfernen (Entfernt nur Infos, nicht die E-Mail)
+            document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("remove-listing").addEventListener("click", function() {
+                if (confirm("Möchtest du dieses Inserat wirklich entfernen?")) {
+                console.log("User confirmed removal");
+                alert("Das Inserat wurde entfernt. Bitte kontaktiere den Verkäufer nun per E-Mail.");
 
-            document.addEventListener('DOMContentLoaded', function() {
-                const webauthentication = getCookie('webauthentication');
+                // Entferne nur die Inserat-Infos, nicht die ganze Card!
+                document.getElementById("listing-info").remove();
+                this.remove(); // Entfernt den Button selbst
+                console.log("Listing info and button removed from the DOM");
 
-                // Fetch email from userinformation.db
-                fetch('/get-user-email', {
+                let bookId = document.cookie.split("; ").find(row => row.startsWith("bookid="))?.split("=")[1];
+                if (bookId) {
+                    bookId = decodeURIComponent(bookId);
+                }
+
+                if (bookId) {
+                    fetch('/remove-listing', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ webauthentication })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.email) {
-                        document.getElementById('seller-email').textContent = data.email;
-                        document.getElementById('seller-email').href = `mailto:${data.email}`;
+                    body: JSON.stringify({ bookid: bookId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    if (data.success) {
+                        console.log("Listing removed successfully");
                     } else {
-                        document.getElementById('seller-email').textContent = 'E-Mail nicht gefunden';
+                        console.error("Failed to remove listing");
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching email:', error);
-                    document.getElementById('seller-email').textContent = 'Fehler beim Laden der E-Mail';
-                });
+                    })
+                    .catch(error => {
+                    console.error('Error:', error);
+                    });
+                } else {
+                    console.error("Kein Buch-ID-Cookie gefunden");
+                }
+                } else {
+                console.log("User canceled removal");
+                }
+            });
             });
         </script>
-
-        <!-- Entfernen-Button -->
-        <button id="remove-listing" class="btn btn-danger mt-3 w-100">Inserat entfernen</button>
-
-        <!-- Erklärung -->
-        <div class="alert alert-info mt-4">
-            <strong>Wichtige Information:</strong> Wenn du dieses Inserat unbedingt haben möchtest, entferne es hier und kontaktiere den Verkäufer privat über die angegebene E-Mail-Adresse.  
-            <br><br>
-            <strong>⚠ Hinweis:</strong> BookSwap bietet derzeit keine integrierte Kaufabwicklung an. Der Kauf erfolgt auf eigene Verantwortung!
         </div>
-    </div>
-
-    <script>
-        // Inserat entfernen (Entfernt nur Infos, nicht die E-Mail)
-        document.getElementById("remove-listing").addEventListener("click", function() {
-            if (confirm("Möchtest du dieses Inserat wirklich entfernen?")) {
-                alert("Das Inserat wurde entfernt. Bitte kontaktiere den Verkäufer nun per E-Mail.");
-
-                //  Entferne nur die Inserat-Infos, nicht die ganze Card!
-                document.getElementById("listing-info").remove();
-                this.remove(); // Entfernt den Button selbst
-            }
-        });
-    </script>
-
-</body>
-</html>
+    </body>
+    </html>

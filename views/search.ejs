@@ -249,7 +249,7 @@
             books.forEach(book => {
             const images = book.filelocation.split(';');
             const image = images.length > 0 ? images[0] : 'https://via.placeholder.com/250';
-            section.innerHTML += createCard(book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel, image, book.description, book.subject, book.webauthentication);
+            section.innerHTML += createCard(book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel, image, book.description, book.subject, book.bookid, book.webauthentication);
             });
             })
             .catch(error => {
@@ -257,7 +257,7 @@
             });
         }
         // Function to create a book card
-        function createCard(title, price, year, condition, level, image, description, subject, webauthentication) {
+        function createCard(title, price, year, condition, level, image, description, subject, bookid, webauthentication) {
             return `
             <div class="col">
                 <a href="Angebotsansicht?title=${encodeURIComponent(title)}
@@ -268,6 +268,7 @@
                 &description=${encodeURIComponent(description || "Keine Beschreibung verfügbar")}
                 &image=${encodeURIComponent(image || "https://via.placeholder.com/250")}
                 &subject=${encodeURIComponent(subject || "Schulfach nicht angegeben")}
+                &bookid=${encodeURIComponent(bookid)}
                 &webauthentication=${encodeURIComponent(webauthentication)}">
                 <div class="card">
                 <div class="card-body">
