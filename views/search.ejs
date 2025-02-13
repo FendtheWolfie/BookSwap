@@ -193,6 +193,9 @@
             <div id="search-results" class="mt-4"></div>
         </div>
     </div>
+
+<!-- skript um die schfunktion zu ermöglichen -->
+
     <script>
         function searchItems() {
             const searchTerm = document.getElementById('search-input').value;
@@ -215,7 +218,7 @@
         });
     </script>
     <script>
-        // Function to get the query parameter value from the URL
+        // funktion um die query parameter zu bekommen
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -241,7 +244,7 @@
             `;
         }
 
-        // Function to populate books based on the search term
+        //funktion um die bücher zu bekommen
         function populateBooks(searchTerm) {
             fetch('/api/books')
                 .then(response => response.json())
@@ -259,7 +262,7 @@
                     console.error('Error fetching books:', error);
                 });
         }
-        // Function to create a book card
+        //funktion um die kategorie zu bekommen
         function createCard(title, price, year, condition, level, image, description, subject, bookid, webauthentication) {
             return `
             <div class="col">
@@ -292,13 +295,13 @@
 
 
 
-        // Event listener for the search button
+        // suchfunktion
         document.getElementById("search-button").addEventListener("click", () => {
             const searchTerm = document.getElementById("search-input").value;
             populateBooks(searchTerm);
         });
 
-        // Populate books on DOMContentLoaded
+        //seiten laden
         document.addEventListener("DOMContentLoaded", () => {
             const searchTerm = getQueryParam("query") || "";
             document.getElementById("search-input").value = searchTerm;

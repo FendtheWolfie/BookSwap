@@ -17,18 +17,16 @@ const session = require('express-session');
 const crypto = require('crypto');
 const multer = require('multer');
 
-// SSL Certificates
+// zertifikate für https zum funktionnieren
 const privateKey = fs.readFileSync('server.key', 'utf8');
 const certificate = fs.readFileSync('server.cert', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 //diese folgenden 2 commands konfigurieren express die ejs templates zu verwenden
 //es wird auch deklariert, wo sich die templates befinden, hier z.B. im views folder
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-//test
 
 //alte funktion:app.get('/impressum', (req, res) => {
 //    res.render('impressum.ejs')})
@@ -64,6 +62,7 @@ app.get('/api/data', (req, res) => {
     })
 })
 
+//alter test für bilder upload (routes lernen)
 /*
 app.get('/api/image', (req, res) => {
     const imagePath = path.join(__dirname, 'public', 'images', 'fox.png');
@@ -76,25 +75,36 @@ app.get('/api/image', (req, res) => {
 })
 */
 
-app.use(cookieParser());
+
+app.use(cookieParser()); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // To parse form data
 app.use(express.static('public'));
 
+
+//test für cookies system
+/*
 app.use(session({
     secret: 'your_secret_key', // Replace with your secret key
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Set to true if using HTTPS
 }));
+*/
 
-    const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-            console.error(err.message);
-        } else {
-            console.log('Connected to the userinformation.db database.');
-        }
-    });
+
+//herstellung der verbindung zur datenbank und check für errors
+
+
+const db = new sqlite3.Database(path.join(__dirname, 'userinformation.db'), sqlite3.OPEN_READWRITE, (err) => {
+    if (err) {
+        console.error(err.message);
+    } else {
+        console.log('Connected to the userinformation.db database.');
+    }
+});
+
+//registrationsystem, upload von daten und check für schon verhandene usernames/emails
 
 app.post('/api/registration', (req, res) => {
     const { username, password, email } = req.body;
@@ -143,7 +153,8 @@ app.post('/api/registration', (req, res) => {
     });
 });
 
-// User login route
+// User login route um die Daten zu überprüfen
+
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     db.get("SELECT * FROM users WHERE username = ?", [username], async (err, user) => {
@@ -157,14 +168,14 @@ app.post('/api/login', (req, res) => {
         if (hashedPassword !== user.password) {
             return res.status(401).send("Invalid credentials");
         }
-        const authToken = generateAuthToken(); // Generate an auth token
+        const authToken = generateAuthToken();
         res.cookie('auth_token', authToken, { 
             httpOnly: true, 
             sameSite: 'None', 
             secure: true  
-        }); // Save auth token as a cookie
+        }); //token als cookie im browser gespeichert
 
-        // Save auth token in the database
+        // speichern des tokens
         const updateAuthTokenSql = `UPDATE users SET auth_token = ? WHERE id = ?`;
         db.run(updateAuthTokenSql, [authToken, user.id], (err) => {
             if (err) {
@@ -177,7 +188,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// Middleware to check auth token
+//auth token check (userlogin check) 
 function authMiddleware(req, res, next) {
     const authToken = req.cookies.auth_token;
     if (!authToken) {
@@ -197,6 +208,8 @@ function authMiddleware(req, res, next) {
     });
 }
 
+//auth token wird generiert
+
 function generateAuthToken() {
     return crypto.randomBytes(30).toString('hex');
 }
@@ -207,7 +220,8 @@ app.get('/login', authMiddleware, (req, res) => {
     res.render('login.ejs');
 });
 */
-// Configure multer for file uploads
+
+// Configure multer for file uploads (ai generiert)
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -217,6 +231,8 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + '-' + file.originalname);
     }
 });
+
+//verantwortlich für das hochladen von den büchern
 
 const upload = multer({ storage: storage });
 app.post('/api/upload', authMiddleware, upload.array('bookImages', 5), (req, res) => {
@@ -280,6 +296,8 @@ app.post('/api/upload', authMiddleware, upload.array('bookImages', 5), (req, res
     });
 });
 
+//check ob user eingeloggt ist
+
 app.get('/api/check-login', (req, res) => {
     const authToken = req.cookies.auth_token;
     if (!authToken) {
@@ -297,6 +315,9 @@ app.get('/api/check-login', (req, res) => {
         res.status(200).json({ loggedIn: true, message: 'User is logged in' });
     });
 });
+
+//alle 5 fünf sekunden wird geprüft ob die filelocation leer ist, wenn ja wird das buch gelöscht
+//wenn nicht wird der filelocation bereinigt und in der datenbank geupdated
 
 setInterval(() => {
     const checkBooksSql = `SELECT id, filelocation FROM books`;
@@ -330,7 +351,9 @@ setInterval(() => {
             }
         });
     });
-}, 5000); // Run every 5 seconds
+}, 5000);
+
+//code um bücher informationen bareitzustellen
 
 app.get('/api/books', (_, res) => {
     const getBooksSql = `SELECT * FROM books`;
@@ -346,6 +369,8 @@ app.get('/api/books', (_, res) => {
         res.status(200).json({ books });
     });
 });
+
+//usermail durch bookid bekommen
 
 app.post('/get-user-email', (req, res) => {
     const { bookid } = req.body;
@@ -373,6 +398,7 @@ app.post('/get-user-email', (req, res) => {
     });
 });
 
+//inserat entfernen 
 
 app.post('/remove-listing', authMiddleware, (req, res) => {
     const { bookid } = req.body;
@@ -409,7 +435,7 @@ app.post('/remove-listing', authMiddleware, (req, res) => {
     });
 });
 
-// Create HTTPS server
+// generieren von https server
 const httpsServer = https.createServer(credentials, app);
 
 httpsServer.listen(port, () => {

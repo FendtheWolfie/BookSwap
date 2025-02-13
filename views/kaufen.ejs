@@ -66,14 +66,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div id="listing-info"></div>
                 <script>
                     document.addEventListener("DOMContentLoaded", function() {
-                        // Get the bookid cookie
+                        //bookid cookie kriegen
                         let bookId = document.cookie.split("; ").find(row => row.startsWith("bookid="))?.split("=")[1];
                         if (bookId) {
                             bookId = decodeURIComponent(bookId);
                         }
 
                         if (bookId) {
-                            // Send the bookid to the server to get the email
+                            //bookid wird gesendet um email zu holen
                             fetch('/get-user-email', {
                                 method: 'POST',
                                 headers: {
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("User confirmed removal");
                 alert("Das Inserat wurde entfernt. Bitte kontaktiere den Verkäufer nun per E-Mail.");
 
-                // Entferne nur die Inserat-Infos, nicht die ganze Card!
+                // Entferne nur die Inserat-Infos, nicht die ganze Card
                 document.getElementById("listing-info").remove();
                 this.remove(); // Entfernt den Button selbst
                 console.log("Listing info and button removed from the DOM");

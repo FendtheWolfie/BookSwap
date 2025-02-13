@@ -265,7 +265,7 @@
                 `;
             }
 
-            // Function to populate books based on the selected category
+            //funktion um die details eines buches anzuzeigen
             function populateCategoryBooks(category, books) {
                 const section = document.getElementById("category-section");
                 section.innerHTML = "";
@@ -280,7 +280,7 @@
                 });
             }
 
-            // Function to populate sections with books
+            //funktion um die details eines buches anzuzeigen
             function populateSection(sectionId, books) {
                 const section = document.getElementById(sectionId);
                 if (!section) return;
@@ -294,7 +294,7 @@
                 });
             }
 
-            // Function to load book details
+            //funktion um die details eines buches anzuzeigen
             function loadBookDetails() {
                 function getUrlParameter(name) {
                     const urlParams = new URLSearchParams(window.location.search);
@@ -315,7 +315,7 @@
                 );
             }
 
-            // Function to fetch books from the API
+            // funktion um die details eines buches anzuzeigen
             async function fetchBooks() {
                 try {
                     const response = await fetch('/api/books');
@@ -327,7 +327,7 @@
                 }
             }
 
-            // Detect which page is loaded and populate accordingly
+            //erkennen ob die seite geladen ist
             document.addEventListener("DOMContentLoaded", async () => {
                 const books = await fetchBooks();
                 const urlParams = new URLSearchParams(window.location.search);
@@ -349,7 +349,7 @@
                 }
             });
 
-            // Search functionality
+            // suchfunktion
             function searchItems() {
                 const searchTerm = document.getElementById('search-input').value;
                 localStorage.setItem('searchTerm', searchTerm);

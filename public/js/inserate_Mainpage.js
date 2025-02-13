@@ -1,4 +1,4 @@
-// 🟢 Funktion für die minimalistische Buchkarte (Mainpage & Kategorie)
+// funktion für die detailierte Buchkarte (Angebotsansicht)
 function createCard(title, price, year, condition, level, description, image, subject, bookid, webauthentication) {
     return `
         <div class="col">
@@ -30,7 +30,7 @@ function createCard(title, price, year, condition, level, description, image, su
 }
 
 
-// 🟢 Funktion zur Anzeige der Mainpage-Bücher (übersichtliche Karten)
+// funktion für die detailierte Buchkarte (Angebotsansicht)
 function populateSection(sectionId, books) {
     const section = document.getElementById(sectionId);
     if (!section) return;
@@ -44,7 +44,7 @@ function populateSection(sectionId, books) {
     });
 }
 
-// 🟢 Funktion zur Anzeige der Kategorieseite (nutzt `createCard()`)
+// funktion
 function populateCategoryBooks(category, books) {
     const section = document.getElementById("category-section");
     section.innerHTML = "";
@@ -59,7 +59,7 @@ function populateCategoryBooks(category, books) {
     });
 }
 
-// 🔵 Angebotsansicht (Details aus URL holen & `createCardForDetails()` nutzen)
+// funktion für die detailierte Buchkarte (Angebotsansicht)
 function loadBookDetails() {
     function getUrlParameter(name) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -82,7 +82,7 @@ function loadBookDetails() {
     );
 }
 
-// 🟢 Funktion zum Abrufen der Buchdaten von der API
+// funktion
 async function fetchBooks() {
     try {
         const response = await fetch('/api/books');
@@ -94,7 +94,7 @@ async function fetchBooks() {
     }
 }
 
-// 🔥 ERKENNEN, WELCHE SEITE GELADEN WIRD
+// erkennung der kategorie
 document.addEventListener("DOMContentLoaded", async () => {
     const books = await fetchBooks();
     const urlParams = new URLSearchParams(window.location.search);
