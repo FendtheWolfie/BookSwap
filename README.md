@@ -1,7 +1,3 @@
-Sure, here is the properly formatted version of your README.md content:
-
----
-
 # Willkommen bei Bookswap 📚
 
 Bookswap ist eine Web-App, mit der du gebrauchte Schulbücher einfach durchsuchen, kaufen oder selbst inserieren kannst. Unsere Plattform ermöglicht es Schüler:innen und Eltern, Schulbücher nachhaltig zu nutzen.
