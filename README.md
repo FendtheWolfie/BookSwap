@@ -23,6 +23,9 @@ https://nodejs.org/en/download
   ```sh
   npm i express cors public path console fs https sqlite3 cookie-parser express-session crypto multer
   ```
+### Folder erstellen:
+Unter dem Folder "public" muss noch ein Folder namens "uploads" erstellt werden
+
 
 ### Server starten:
 - Führe folgenden Befehl aus:
