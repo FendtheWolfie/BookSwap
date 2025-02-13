@@ -55,7 +55,8 @@ setupRoute(app, '/angebotsansicht','angebotsansicht.ejs')
 setupRoute(app, '/kaufen','kaufen.ejs')
 setupRoute(app, '/search','search.ejs')
 setupRoute(app, '/filter','filter.ejs')
-
+setupRoute(app, '/support','support.ejs')
+setupRoute(app, '/socialmedia','socialmedia.ejs')
 
 app.get('/api/data', (req, res) => {
     res.json({message: 'this is my data',
