@@ -1,10 +1,14 @@
-# Willkommen bei Bookswap 📚
+# Willkommen bei Bookswap 
 
 Bookswap ist eine Web-App, mit der du gebrauchte Schulbücher einfach durchsuchen, kaufen oder selbst inserieren kannst. Unsere Plattform ermöglicht es Schüler:innen und Eltern, Schulbücher nachhaltig zu nutzen.
 
 ## Installation & Nutzung
 
 Bitte beachte, dass die Webseite aktuell nur lokal läuft. Um sie auf deinem Rechner auszuführen, folge diesen Schritten:
+
+NodeJS runtime environment herunterladen
+
+https://nodejs.org/en/download
 
 ### Dateien Herunterladen:
 - Repository klonen:
