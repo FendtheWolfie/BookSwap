@@ -16,6 +16,7 @@ https://nodejs.org/en/download
   git clone https://github.com/dein-benutzername/bookswap.git
   ```
 - Repository einfach herunterladen als zip-file
+  Wichtig!!! den neuen Branch auswählen
 
 ### Abhängigkeiten installieren:
 - Öffne eine neue Commandline und führe folgenden Befehl aus:
