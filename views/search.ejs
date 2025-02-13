@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BookSwap - Startseite</title>
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    />
-    <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 </head>
+
 <body>
     <header>
         <!-- Navbar -->
@@ -24,7 +20,8 @@
                         <img src="/images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50" />
                     </button>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
@@ -49,9 +46,10 @@
         <!-- Search Bar -->
         <div class="container mt-4">
             <div class="input-group">
-                <input type="text" class="form-control" id="search-input" placeholder="Suche nach Artikel" onkeypress="handleKeyPress(event)">
+                <input type="text" class="form-control" id="search-input" placeholder="Suche nach Artikel"
+                    onkeypress="handleKeyPress(event)">
                 <button class="btn btn-primary" type="button" id="search-button" onclick="searchItems()"></button>
-                    <i class="bi bi-search"></i>
+                <i class="bi bi-search"></i>
                 </button>
             </div>
         </div>
@@ -140,19 +138,23 @@
                 <div class="mb-3">
                     <label class="form-label">Zustand des Buches</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="bookCondition" value="Wie neu" id="conditionNew">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Wie neu"
+                            id="conditionNew">
                         <label class="form-check-label" for="conditionNew">Wie neu</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="bookCondition" value="Guter Zustand" id="conditionGood">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Guter Zustand"
+                            id="conditionGood">
                         <label class="form-check-label" for="conditionGood">Guter Zustand</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="bookCondition" value="Akzeptabel" id="conditionAcceptable">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Akzeptabel"
+                            id="conditionAcceptable">
                         <label class="form-check-label" for="conditionAcceptable">Akzeptabel</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="bookCondition" value="Stark gebraucht" id="conditionUsed">
+                        <input class="form-check-input" type="radio" name="bookCondition" value="Stark gebraucht"
+                            id="conditionUsed">
                         <label class="form-check-label" for="conditionUsed">Stark gebraucht</label>
                     </div>
                 </div>
@@ -188,6 +190,7 @@
                 <!-- Suchbutton -->
                 <button type="submit" class="btn btn-primary">Suchen</button>
             </form>
+            <div id="search-results" class="mt-4"></div>
         </div>
     </div>
     <script>
@@ -241,20 +244,20 @@
         // Function to populate books based on the search term
         function populateBooks(searchTerm) {
             fetch('/api/books')
-            .then(response => response.json())
-            .then(data => {
-            const books = data.books.filter(book => book.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()));
-            const section = document.getElementById("category-section");
-            section.innerHTML = "";
-            books.forEach(book => {
-            const images = book.filelocation.split(';');
-            const image = images.length > 0 ? images[0] : 'https://via.placeholder.com/250';
-            section.innerHTML += createCard(book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel, image, book.description, book.subject, book.bookid, book.webauthentication);
-            });
-            })
-            .catch(error => {
-            console.error('Error fetching books:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    const books = data.books.filter(book => book.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()));
+                    const section = document.getElementById("category-section");
+                    section.innerHTML = "";
+                    books.forEach(book => {
+                        const images = book.filelocation.split(';');
+                        const image = images.length > 0 ? images[0] : 'https://via.placeholder.com/250';
+                        section.innerHTML += createCard(book.bookTitle, book.price, book.publicationYear, book.bookCondition, book.educationLevel, image, book.description, book.subject, book.bookid, book.webauthentication);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                });
         }
         // Function to create a book card
         function createCard(title, price, year, condition, level, image, description, subject, bookid, webauthentication) {
@@ -301,8 +304,9 @@
             document.getElementById("search-input").value = searchTerm;
             populateBooks(searchTerm);
         });
-        </script>
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -1,124 +1,116 @@
 <!DOCTYPE html>
 <html lang="de">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>BookSwap - Kategorie</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel="stylesheet"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-        />
-    </head>
-    <body>
-        <header>
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container">
-                    <!-- Logo -->
-                    <a class="navbar-brand" href="/">
-                        <img src="images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50"> <!-- Replace with your SVG logo -->
-                    </a>
-                    </a>
-                    </a>
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarNav"
-                        aria-controls="navbarNav"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="inseraterstellen">
-                                    <i class="bi bi-plus"></i>
-                                    Angebot erstellen
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="login" class="btn btn-primary">
-                                    <i class="bi bi-person"></i>
-                                    Anmelden
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookSwap - Kategorie</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+</head>
+
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <!-- Logo -->
+                <a class="navbar-brand" href="/">
+                    <img src="images/logo-transparent-svg.svg" alt="BookSwap Logo" height="50">
+                    <!-- Replace with your SVG logo -->
+                </a>
+                </a>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="inseraterstellen">
+                                <i class="bi bi-plus"></i>
+                                Angebot erstellen
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login" class="btn btn-primary">
+                                <i class="bi bi-person"></i>
+                                Anmelden
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </nav>
-
-    <!-- Search Bar -->
-    <div class="container mt-4">
-        <div class="input-group">
-            <input type="text" class="form-control" id="search-input" placeholder="Suche nach Artikel" onkeypress="handleKeyPress(event)">
-            <button class="btn btn-primary" type="button" onclick="searchItems()">
-                <i class="bi bi-search"></i>
-            </button>
-        </div>
-    </div>
             </div>
+        </nav>
 
-            <!-- Categories -->
-            <div class="container mt-3">
-                <ul class="nav nav-pills justify-content-center">
-                    <li class="nav-item">
-                        <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#sidebar">
-                            <i class="bi bi-list"></i>
-                            Alle Kategorien
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Mathematik">Mathe</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Deutsch">Deutsch</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Englisch">Englisch</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Französisch">Französisch</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Geografie">Geografie</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Geschichte">Geschichte</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Wirtschaft">Wirtschaft</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="kategorie?category=Recht">Recht</a>
-                    </li>
-                </ul>
-            </div>
-        </header>
-
+        <!-- Search Bar -->
         <div class="container mt-4">
-            <h2 id="category-name"></h2>
-            <div class="row row-cols-1 row-cols-md-5 g-4" id="category-section"></div>
+            <div class="input-group">
+                <input type="text" class="form-control" id="search-input" placeholder="Suche nach Artikel"
+                    onkeypress="handleKeyPress(event)">
+                <button class="btn btn-primary" type="button" onclick="searchItems()">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
         </div>
 
-        <!--Offcanvas-->
-        <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="sidebar-label">Erweiterte Suchfunktionen</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
+        <!-- Categories -->
+        <div class="container mt-3">
+            <ul class="nav nav-pills justify-content-center">
+                <li class="nav-item">
+                    <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#sidebar">
+                        <i class="bi bi-list"></i>
+                        Alle Kategorien
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Mathematik">Mathe</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Deutsch">Deutsch</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Englisch">Englisch</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Französisch">Französisch</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Geografie">Geografie</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Geschichte">Geschichte</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Wirtschaft">Wirtschaft</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="kategorie?category=Recht">Recht</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <h2 id="category-name"></h2>
+        <div class="row row-cols-1 row-cols-md-5 g-4" id="category-section"></div>
+    </div>
+
+    <!--Offcanvas-->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebar" aria-labelledby="sidebar-label">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="sidebar-label">Erweiterte Suchfunktionen </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
             <div class="offcanvas-body">
-                <form>
+                <form id="filter-form" action="filter" method="GET">
                     <!-- Schulfach Dropdown -->
                     <div class="mb-3">
                         <label for="subject" class="form-label">Schulfach</label>
-                        <select id="subject" class="form-select">
+                        <select id="schoolSubject" class="form-select" name="schoolSubject">
                             <option value="">Bitte wählen...</option>
                             <option value="Mathematik">Mathematik</option>
                             <option value="Deutsch">Deutsch</option>
@@ -134,7 +126,7 @@
                     <!-- Erscheinungsjahr Dropdown -->
                     <div class="mb-3">
                         <label for="year" class="form-label">Erscheinungsjahr</label>
-                        <select id="year" class="form-select">
+                        <select id="year" class="form-select" name="year">
                             <option value="">Bitte wählen...</option>
                             <!-- Dynamisch generierte Optionen von 2010 bis 2025 -->
                             <script>
@@ -149,19 +141,23 @@
                     <div class="mb-3">
                         <label class="form-label">Zustand des Buches</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="bookCondition" value="Wie neu" id="conditionNew" />
+                            <input class="form-check-input" type="radio" name="bookCondition" value="Wie neu"
+                                id="conditionNew">
                             <label class="form-check-label" for="conditionNew">Wie neu</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="bookCondition" value="Guter Zustand" id="conditionGood" />
+                            <input class="form-check-input" type="radio" name="bookCondition" value="Guter Zustand"
+                                id="conditionGood">
                             <label class="form-check-label" for="conditionGood">Guter Zustand</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="bookCondition" value="Akzeptabel" id="conditionAcceptable" />
+                            <input class="form-check-input" type="radio" name="bookCondition" value="Akzeptabel"
+                                id="conditionAcceptable">
                             <label class="form-check-label" for="conditionAcceptable">Akzeptabel</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="bookCondition" value="Stark gebraucht" id="conditionUsed" />
+                            <input class="form-check-input" type="radio" name="bookCondition" value="Stark gebraucht"
+                                id="conditionUsed">
                             <label class="form-check-label" for="conditionUsed">Stark gebraucht</label>
                         </div>
                     </div>
@@ -169,7 +165,7 @@
                     <!-- Niveau Dropdown -->
                     <div class="mb-3">
                         <label for="level" class="form-label">Niveau</label>
-                        <select id="level" class="form-select">
+                        <select id="level" class="form-select" name="level">
                             <option value="">Bitte wählen...</option>
                             <option value="Realschule">Realschule</option>
                             <option value="Sekundarschule">Sekundarschule</option>
@@ -180,6 +176,7 @@
                             <option value="Universität">Universität</option>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label for="price" class="form-label">Preis</label>
                         <select id="price" class="form-select">
@@ -197,13 +194,43 @@
                     <!-- Suchbutton -->
                     <button type="submit" class="btn btn-primary">Suchen</button>
                 </form>
+                <div id="search-results" class="mt-4"></div>
             </div>
         </div>
 
         <script>
+            document.getElementById('filter-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const schoolSubject = document.getElementById('schoolSubject').value;
+                const year = document.getElementById('year').value;
+                const bookCondition = document.querySelector('input[name="bookCondition"]:checked')?.value;
+                const level = document.getElementById('level').value;
+                const price = document.getElementById('price').value;
+
+                const queryParams = new URLSearchParams({
+                    schoolSubject,
+                    year,
+                    bookCondition,
+                    level,
+                    price,
+                });
+
+                window.location.href = `/filter?${queryParams.toString()}`;
+            });
+
+            function getUrlParameter(name) {
+                name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                const results = regex.exec(location.search);
+                return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+            }
+        </script>
+
+
+        <script>
             // Function to create a book card
             function createCard(title, price, year, condition, level, description, image, subject, bookid, webauthentication) {
-            return `
+                return `
                 <div class="col">
                 <a href="Angebotsansicht?title=${encodeURIComponent(title)}
                 &price=${encodeURIComponent(price)}
@@ -261,8 +288,8 @@
                             book.bookDescription, firstImage, book.schoolSubject, book.bookid, book.webauthentication
                         );
                     }
-                    });
-                }
+                });
+            }
 
             // Function to populate books based on the selected category
             function populateCategoryBooks(category, books) {
@@ -359,26 +386,27 @@
 
             // Search functionality
             function searchItems() {
-            const searchTerm = document.getElementById('search-input').value;
-            localStorage.setItem('searchTerm', searchTerm);
-            window.location.href = `/search?query=${encodeURIComponent(searchTerm)}`;
+                const searchTerm = document.getElementById('search-input').value;
+                localStorage.setItem('searchTerm', searchTerm);
+                window.location.href = `/search?query=${encodeURIComponent(searchTerm)}`;
             }
 
             function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                searchItems();
-            }
+                if (event.key === 'Enter') {
+                    searchItems();
+                }
             }
 
             document.addEventListener('DOMContentLoaded', () => {
-            const searchTerm = localStorage.getItem('searchTerm');
-            if (searchTerm) {
-                document.getElementById('search-input').value = searchTerm;
-                localStorage.removeItem('searchTerm');
-            }
+                const searchTerm = localStorage.getItem('searchTerm');
+                if (searchTerm) {
+                    document.getElementById('search-input').value = searchTerm;
+                    localStorage.removeItem('searchTerm');
+                }
             });
 
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+</body>
+
 </html>
